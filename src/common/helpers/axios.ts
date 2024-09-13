@@ -89,7 +89,7 @@ function _buildBrowserAxiosInstance() {
     return axios;
   }
   axios = _axios.create({
-    baseURL: "https://s562.consocia.in",
+    baseURL: import.meta.env.APP_API_URL,
     headers: {
       "Content-type": "application/json",
       "X-CLIENT-ID": 2,
