@@ -7,8 +7,12 @@ import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { useEffect } from "react";
 import { useRoutes } from "react-router-dom";
+import logger from "./common/helpers/logger";
 
 function App() {
+  useEffect(() => {
+    logger.debug("App started", import.meta.env);
+  }, []);
   const { payload } = useAuthStore();
   useEffect(() => {
     if (!payload?.id) {
