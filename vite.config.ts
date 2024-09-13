@@ -17,8 +17,8 @@ export default ({ mode }: { mode: string }) => {
     },
     plugins: [react(), preload()],
     define: {
-      "import.meta.env.APP_CLIENT_ID": Number(env.APP_CLIENT_ID),
-      "import.meta.env.APP_API_URL": JSON.stringify(env.APP_API_URL),
+      "import.meta.env.APP_CLIENT_ID": 2,
+      "import.meta.env.APP_API_URL": "https://s562.consocia.in"
     },
   });
 }
