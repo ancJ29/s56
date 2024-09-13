@@ -14,11 +14,11 @@ const routes = [
     path: "/login",
     element: lazy(() => import("@/pages/login")),
   },
-  {
-    path: "/clients",
-    wrappers: ["Auth", "CollapseAppShell"],
-    element: lazy(() => import("@/pages/clients")),
-  },
+  // {
+  //   path: "/clients",
+  //   wrappers: ["Auth", "CollapseAppShell"],
+  //   element: lazy(() => import("@/pages/clients")),
+  // },
   {
     path: "/tasks",
     wrappers: ["Auth", "CollapseAppShell"],
@@ -28,15 +28,15 @@ const routes = [
     path: "/logout",
     element: lazy(() => import("@/pages/logout")),
   },
-  {
-    path: "/dashboard",
-    wrappers: ["Auth", "CollapseAppShell"],
-    element: lazy(() => import("@/pages/dashboard")),
-  },
+  // {
+  //   path: "/dashboard",
+  //   wrappers: ["Auth", "CollapseAppShell"],
+  //   element: lazy(() => import("@/pages/dashboard")),
+  // },
   {
     path: "*",
     wrapper: "Blank",
-    element: lazy(() => import("@/pages/blank")),
+    element: lazy(() => import("@/pages/tasks")),
   },
 ].map(({ path, wrapper, wrappers, element: Component }) => {
   return {
