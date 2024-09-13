@@ -89,10 +89,10 @@ function _buildBrowserAxiosInstance() {
     return axios;
   }
   axios = _axios.create({
-    baseURL: import.meta.env.APP_API_URL,
+    baseURL: "https://s562.consocia.in",
     headers: {
       "Content-type": "application/json",
-      "X-CLIENT-ID": import.meta.env.APP_CLIENT_ID,
+      "X-CLIENT-ID": 2,
       "X-LANG": localStorage.__LANGUAGE__,
     },
   });
