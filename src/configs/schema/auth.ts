@@ -1,0 +1,51 @@
+import { APP_ACTIONS } from "@/configs/enums";
+import * as z from "zod";
+import {
+  builder,
+  numberSchema,
+  optionalBooleanSchema,
+  optionalStringSchema,
+  passwordSchema,
+  stringSchema,
+  successSchema,
+} from "./_base";
+import { OTHER_SCHEMA } from "./custom";
+
+export const authenticationPayloadSchema = z.object({
+  id: stringSchema,
+  clientId: numberSchema,
+  userName: stringSchema,
+  isSystemAdmin: optionalBooleanSchema,
+  isAdmin: optionalBooleanSchema,
+  client: z
+    .object({
+      id: numberSchema,
+      name: stringSchema,
+      code: stringSchema,
+      menu: OTHER_SCHEMA.CLIENT_OTHER_SCHEMA.shape.menu,
+    })
+    .optional(),
+});
+
+export const registerSchema = builder({
+  action: z.literal(APP_ACTIONS.AUTH_REGISTER),
+  params: z.object({
+    clientId: numberSchema,
+    userName: stringSchema,
+    password: passwordSchema,
+  }),
+  result: successSchema,
+});
+
+export const loginSchema = builder({
+  action: z.literal(APP_ACTIONS.AUTH_LOGIN),
+  params: z.object({
+    clientId: numberSchema,
+    userName: stringSchema,
+    password: stringSchema,
+    mfaCode: optionalStringSchema,
+  }),
+  result: z.object({
+    token: stringSchema,
+  }),
+});

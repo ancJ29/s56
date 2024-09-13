@@ -1,0 +1,7 @@
+node_modules/
+dist/
+package.json
+vite.config.ts
+tsconfig.*
+index.html
+.vscode/
