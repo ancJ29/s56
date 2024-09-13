@@ -36,7 +36,7 @@ const routes = [
   {
     path: "*",
     wrapper: "Blank",
-    element: lazy(() => import("@/pages/tasks")),
+    element: lazy(() => import("@/pages/blank")),
   },
 ].map(({ path, wrapper, wrappers, element: Component }) => {
   return {
