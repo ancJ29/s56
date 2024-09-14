@@ -6,7 +6,11 @@ import { VitePWA } from "vite-plugin-pwa";
 
 export default () => {
   return defineConfig({
-    plugins: [react(), preload(), VitePWA({})],
+    plugins: [react(), preload(), VitePWA({
+      manifest: {
+        theme_color: "#000000",
+      },
+    })],
     server: {
       port: 9950,
     },
