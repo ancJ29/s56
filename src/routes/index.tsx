@@ -31,12 +31,12 @@ const routes = [
   {
     path: "/dashboard",
     wrappers: ["Auth", "CollapseAppShell"],
-    element: lazy(() => import("@/pages/dashboard")),
+    element: lazy(() => import("@/pages/tasks")),
   },
   {
     path: "*",
     wrapper: "Blank",
-    element: lazy(() => import("@/pages/blank")),
+    element: lazy(() => import("@/pages/login")),
   },
 ].map(({ path, wrapper, wrappers, element: Component }) => {
   return {

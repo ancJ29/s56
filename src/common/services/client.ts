@@ -3,6 +3,7 @@ import logger from "@/common/helpers/logger";
 import { APP_ACTIONS } from "@/configs/enums/actions";
 import { getClientMetaDataSchema } from "@/configs/schema/client";
 import { ONE_HOUR } from "@/constants";
+import authStore from "../stores/auth";
 
 export async function getMetaData() {
   const APP_CLIENT_ID = Number(import.meta.env.APP_CLIENT_ID || 0);
@@ -24,5 +25,8 @@ export async function getMetaData() {
     },
   );
   logger.info("meta data", res);
+  if (!res) {
+    authStore.getState().logout();
+  }
   return res;
 }
