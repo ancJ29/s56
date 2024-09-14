@@ -31,16 +31,16 @@ export default function Login() {
   const form = useForm({ initialValues, validate });
   const { payload, setToken } = useAuthStore();
   const width = useMatches({
-    base: "70vw",
-    sm: "70vw",
-    lg: "30vw",
+    base: "70dvw",
+    sm: "70dvw",
+    lg: "30dvw",
   });
   if (payload?.id) {
     logger.info("User already logged in", payload);
     return <Navigate to="/dashboard" />;
   }
   return (
-    <Flex w="100vw" h="100vh" align="center" justify="center">
+    <Flex w="100dvw" h="100dvh" align="center" justify="center">
       <Center>
         <Paper radius="md" p="xl" withBorder w={width}>
           <Text size="lg" fw={500}>

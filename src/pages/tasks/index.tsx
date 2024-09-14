@@ -5,7 +5,7 @@ import { CDrawer } from "@/common/ui-components/CKits/CDrawer";
 import { MobileDataList } from "@/common/ui-components/Table/MobileDataList";
 import { GanttChart } from "@/common/ui-components/TaskManagement/GanttChart";
 import { TaskContent } from "@/common/ui-components/TaskManagement/TaskContent";
-import { Flex, Switch } from "@mantine/core";
+import { Flex, Modal, Switch } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useCallback, useEffect, useState } from "react";
 import { configs } from "./config";
@@ -66,33 +66,63 @@ export default function Tasks() {
           onSelectTask={selectTask}
         />
       )}
-      <CDrawer
-        opened={opened && Boolean(selectedTask)}
-        onClose={() => {
-          close();
-          setSelectedTask(undefined);
-        }}
-      >
-        {selectedTask && (
-          <TaskContent
-            task={selectedTask}
-            onSave={(task) => {
-              setTasks(
-                tasks.map((el) => {
-                  if (el.id === task.id) {
-                    return task;
-                  }
-                  return el;
-                }),
-              );
-            }}
-            onClose={() => {
-              close();
-              setSelectedTask(undefined);
-            }}
-          />
-        )}
-      </CDrawer>
+      {isMobile ? (
+        <Modal
+          title={<b>{selectedTask?.title}</b>}
+          opened={opened}
+          onClose={close}
+          centered
+          size={"lg"}
+        >
+          {selectedTask && (
+            <TaskContent
+              task={selectedTask}
+              onSave={(task) => {
+                setTasks(
+                  tasks.map((el) => {
+                    if (el.id === task.id) {
+                      return task;
+                    }
+                    return el;
+                  }),
+                );
+              }}
+              onClose={() => {
+                close();
+                setSelectedTask(undefined);
+              }}
+            />
+          )}
+        </Modal>
+      ) : (
+        <CDrawer
+          opened={opened && Boolean(selectedTask)}
+          onClose={() => {
+            close();
+            setSelectedTask(undefined);
+          }}
+        >
+          {selectedTask && (
+            <TaskContent
+              task={selectedTask}
+              onSave={(task) => {
+                setTasks(
+                  tasks.map((el) => {
+                    if (el.id === task.id) {
+                      return task;
+                    }
+                    return el;
+                  }),
+                );
+              }}
+              onClose={() => {
+                close();
+                setSelectedTask(undefined);
+              }}
+            />
+          )}
+        </CDrawer>
+      )}
     </>
   );
 }

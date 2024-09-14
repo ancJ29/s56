@@ -12,12 +12,14 @@ import useAuthStore from "@/common/stores/auth";
 import { NoteInput } from "@/common/ui-components/TaskManagement/NoteInput";
 import { TaskNote } from "@/common/ui-components/TaskManagement/TaskNote";
 import {
+  Box,
   Button,
   Container,
   Divider,
   Flex,
   ScrollArea,
   SimpleGrid,
+  Space,
   Stack,
   Tabs,
   Text,
@@ -25,11 +27,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
-import {
-  IconInfoCircle,
-  IconMessage,
-  IconX,
-} from "@tabler/icons-react";
+import { IconInfoCircle, IconMessage } from "@tabler/icons-react";
 import deepEqual from "lodash.isequal";
 import { useState } from "react";
 import { UserSelector } from "../../UserManagement/UserSelector";
@@ -52,14 +50,12 @@ export function TaskContent({
     return (
       <Container
         display="flex"
-        h="98vh"
+        h={isMobile ? undefined : "98dvh"}
         style={{
+          position: "relative",
           flexDirection: "column",
         }}
       >
-        <Flex justify="end" my={0}>
-          <IconX onClick={onClose} />
-        </Flex>
         <TitleAndDescription form={form} setForm={setForm} />
         <Tabs defaultValue="information">
           <Tabs.List>
@@ -83,7 +79,6 @@ export function TaskContent({
             />
           </Tabs.Panel>
           <Tabs.Panel value="notes">
-            <Notes form={form} setForm={setForm} />
             <NoteInput
               onSave={(note) => {
                 const notes = form.notes || [];
@@ -114,6 +109,7 @@ export function TaskContent({
                 });
               }}
             />
+            <Notes form={form} setForm={setForm} />
           </Tabs.Panel>
         </Tabs>
       </Container>
@@ -123,12 +119,13 @@ export function TaskContent({
   return (
     <Container
       display="flex"
-      h="98vh"
+      h="98dvh"
       style={{
         flexDirection: "column",
       }}
     >
       <TitleAndDescription form={form} setForm={setForm} />
+      <Space h=".5rem" />
       <Attributes form={form} setForm={setForm} />
       <SaveTaskButton
         task={task}
@@ -185,7 +182,7 @@ function SaveTaskButton({
   return (
     <Flex mt={"1rem"} justify="end">
       <Button
-        w="10rem"
+        size="xs"
         onClick={() => {
           if (deepEqual(form, task)) {
             failed("Invalid request", "Nothing to save!");
@@ -241,12 +238,17 @@ function Notes({
   if (!form.notes?.length) {
     return (
       <>
-        <Text fw="600" mt="15px">
-          {t("Notes")}
-        </Text>
+        <Text fw="600">{t("Notes")}</Text>
         <Flex
+          style={
+            isMobile
+              ? undefined
+              : {
+                  flexGrow: 1,
+                }
+          }
           mih="100px"
-          h={isMobile ? "30vh" : undefined}
+          h={isMobile ? "30dvh" : undefined}
           align="center"
           justify="center"
         >
@@ -257,13 +259,13 @@ function Notes({
   }
   return (
     <>
-      <Text fw="600" mt="15px">
+      <Text fw="600">
         {t("Notes")} ({form.notes?.length || 0})
       </Text>
       <ScrollArea
         style={{
           flexGrow: 1,
-          height: isMobile ? "30vh" : undefined,
+          height: isMobile ? "30dvh" : undefined,
         }}
       >
         <Stack gap="1rem">
@@ -307,22 +309,20 @@ function TitleAndDescription({
   const t = useTranslation();
   return (
     <>
-      <Text fw="600" mt="15px">
-        {t("Title")}
-      </Text>
-      <TextInput
-        fw="600"
-        value={form.title}
-        onChange={(e) => {
-          setForm({
-            ...form,
-            title: e.currentTarget.value,
-          });
-        }}
-      />
-      <Text fw="600" mt="15px">
-        {t("Description")}
-      </Text>
+      <Box visibleFrom="md">
+        <Text fw="600">{t("Title")}</Text>
+        <TextInput
+          fw="600"
+          value={form.title}
+          onChange={(e) => {
+            setForm({
+              ...form,
+              title: e.currentTarget.value,
+            });
+          }}
+        />
+      </Box>
+      <Text fw="600">{t("Description")}</Text>
       <Textarea
         value={form.description}
         rows={3}
@@ -354,12 +354,8 @@ function Attributes({
         }}
       >
         <SimpleGrid cols={2}>
-          <Text fw="600" mt="15px">
-            {t("Assignee")}
-          </Text>
-          <Text fw="600" mt="15px">
-            {t("Status")}
-          </Text>
+          <Text fw="600">{t("Assignee")}</Text>
+          <Text fw="600">{t("Status")}</Text>
           <UserSelector
             value={form.assigneeId}
             onChange={(assigneeId) => {
@@ -378,12 +374,8 @@ function Attributes({
           />
         </SimpleGrid>
         <SimpleGrid cols={2}>
-          <Text fw="600" mt="15px">
-            {t("Start date")}
-          </Text>
-          <Text fw="600" mt="15px">
-            {t("End date")}
-          </Text>
+          <Text fw="600">{t("Start date")}</Text>
+          <Text fw="600">{t("End date")}</Text>
 
           <DateInput
             value={
@@ -416,21 +408,3 @@ function Attributes({
     </>
   );
 }
-
-// function ToggleCollapse({
-//   isOpen,
-//   onToggle,
-// }: {
-//   isOpen: boolean;
-//   onToggle: () => void;
-// }) {
-//   return (
-//     <Flex w="100%" justify="center" hiddenFrom="md">
-//       {isOpen ? (
-//         <IconChevronUp onClick={onToggle} />
-//       ) : (
-//         <IconChevronDown onClick={onToggle} />
-//       )}
-//     </Flex>
-//   );
-// }

@@ -1,4 +1,11 @@
-import { Avatar, Button, Card, Flex, Text } from "@mantine/core";
+import {
+  Avatar,
+  Card,
+  Flex,
+  Text,
+  useMantineTheme,
+} from "@mantine/core";
+import { IconTrash } from "@tabler/icons-react";
 
 type NoteProps = {
   id: string;
@@ -14,6 +21,8 @@ export function TaskNote({
   note: NoteProps;
   onRemove: () => void;
 }) {
+  const theme = useMantineTheme();
+
   return (
     <>
       <Card shadow="sm" padding="xs" radius="md" withBorder>
@@ -31,16 +40,7 @@ export function TaskNote({
               {new Date(note.createdAt).toLocaleString()}
             </Text>
           </Flex>
-
-          <Button
-            onClick={onRemove}
-            size="xs"
-            color="orange.5"
-            radius="md"
-            w="10rem"
-          >
-            Remove
-          </Button>
+          <IconTrash color={theme.colors.red[4]} onClick={onRemove} />
         </Flex>
       </Card>
     </>

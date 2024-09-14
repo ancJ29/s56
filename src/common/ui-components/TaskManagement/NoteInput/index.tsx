@@ -1,31 +1,15 @@
 import { failed } from "@/common/helpers/toast";
+import useIsMobile from "@/common/hooks/useIsMobile";
 import useTranslation from "@/common/hooks/useTranslation";
-import {
-  Box,
-  Button,
-  Flex,
-  MantineSize,
-  Text,
-  Textarea,
-} from "@mantine/core";
+import { Box, Button, Flex, Text, Textarea } from "@mantine/core";
+import { modals } from "@mantine/modals";
 import { useState } from "react";
 
-export function NoteInput({
-  onSave,
-  visibleFrom,
-  hiddenFrom,
-}: {
-  visibleFrom?: MantineSize | (string & {}) | undefined;
-  hiddenFrom?: MantineSize | (string & {}) | undefined;
-  onSave?: (_: string) => void;
-}) {
-  const t = useTranslation();
+function Input({ onSave }: { onSave?: (_: string) => void }) {
   const [note, setNote] = useState("");
+
   return (
-    <Box visibleFrom={visibleFrom} hiddenFrom={hiddenFrom}>
-      <Text fw="600" mt="15px">
-        {t("Add your note")}
-      </Text>
+    <>
       <Textarea
         rows={5}
         value={note}
@@ -52,6 +36,52 @@ export function NoteInput({
           Send
         </Button>
       </Flex>
+    </>
+  );
+}
+
+export function NoteInput({
+  onSave,
+}: {
+  onSave?: (_: string) => void;
+}) {
+  const t = useTranslation();
+  const isMobile = useIsMobile();
+  return (
+    <Box>
+      <Text fw="600" mt="15px" visibleFrom="md">
+        {t("Add your note")}
+      </Text>
+      <Flex hiddenFrom="md" justify="end">
+        <Button
+          size="xs"
+          mt="5px"
+          mb={0}
+          onClick={() => {
+            if (isMobile) {
+              modals.open({
+                centered: true,
+                withinPortal: true,
+                size: "xs",
+                padding: "xs",
+                portalProps: {},
+                title: "Add Your Note",
+                children: (
+                  <Input
+                    onSave={async (note: string) => {
+                      await onSave?.(note);
+                      modals.closeAll();
+                    }}
+                  />
+                ),
+              });
+            }
+          }}
+        >
+          {t("Add your note")}
+        </Button>
+      </Flex>
+      {isMobile ? <></> : <Input onSave={onSave} />}
     </Box>
   );
 }

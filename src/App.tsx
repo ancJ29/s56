@@ -4,6 +4,8 @@ import useAuthStore from "@/common/stores/auth";
 import clientStore from "@/common/stores/client";
 import routes from "@/routes";
 import { resolver, theme } from "@/styles/theme/mantine-theme";
+import { ModalsProvider } from "@mantine/modals";
+
 import { LoadingOverlay, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { useEffect } from "react";
@@ -34,7 +36,7 @@ function App() {
         zIndex={1000}
         overlayProps={{ radius: "sm", blur: 10 }}
       />
-      {useRoutes(routes)}
+      <ModalsProvider>{useRoutes(routes)}</ModalsProvider>
       <Notifications />
     </MantineProvider>
   );
