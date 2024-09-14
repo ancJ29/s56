@@ -1,6 +1,5 @@
+import useIsMobile from "@/common/hooks/useIsMobile";
 import { UnknownRecord } from "@/configs/types";
-import { em } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
 import {
   MobileDataList,
   MobileDataListProps,
@@ -11,7 +10,7 @@ export function SimpleResponsiveTable<T extends UnknownRecord>({
   scrollAreaHeight,
   ...props
 }: MobileDataListProps<T> & SimpleTableProps<T>) {
-  const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
+  const isMobile = useIsMobile();
 
   return isMobile ? (
     <MobileDataList scrollAreaHeight={scrollAreaHeight} {...props} />

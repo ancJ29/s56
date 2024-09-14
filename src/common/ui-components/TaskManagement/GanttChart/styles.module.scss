@@ -1,0 +1,52 @@
+$height: 25px;
+$dateCellWidth: 75px;
+
+.container {
+  display: flex;
+  align-content: flex-start;
+  justify-content: start;
+
+  .headerHeight {
+    height: $height;
+  }
+
+  .activeCell {
+    cursor: pointer;
+    background-color: #edcc5f;
+  }
+
+  .avatar {
+    width: 20px;
+  }
+
+  .dateCell {
+    width: $dateCellWidth;
+  }
+
+  .dense {
+    $denseHeight: 45px;
+    $subTitleHeight: 15px;
+
+    .ceilHeight {
+      height: $denseHeight;
+    }
+
+    .title {
+      height: $height;
+    }
+
+    .subTitle {
+      height: $subTitleHeight;
+    }
+  }
+
+  .normal {
+    .ceilHeight {
+      height: $height;
+    }
+
+    .title {
+      height: $height;
+    }
+  }
+}

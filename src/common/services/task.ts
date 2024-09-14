@@ -1,10 +1,24 @@
 import { callApi } from "@/common/helpers/axios";
+import clientStore from "@/common/stores/client";
 import { APP_ACTIONS } from "@/configs/enums/actions";
-import { addNoteSchema, getTasksSchema, removeNoteSchema, updateTaskSchema } from "@/configs/schema/task";
-import { z } from "zod";
+import {
+  addNoteSchema,
+  getTasksSchema,
+  removeNoteSchema,
+  updateTaskSchema,
+} from "@/configs/schema/task";
+import { ClientMetaData } from "@/configs/types";
+import * as z from "zod";
+import logger from "../helpers/logger";
+import { getMetaData } from "./client";
 
-export type Task = z.infer<typeof getTasksSchema.result>[0];
-export type Note = Task["notes"][0]
+type TaskFromServer = z.infer<typeof getTasksSchema.result>[0];
+
+export type Task = Omit<TaskFromServer, "status"> & {
+  status: string;
+};
+
+export type Note = Task["notes"][0];
 
 export async function getTasks(): Promise<Task[]> {
   const action = APP_ACTIONS.TASK_GET_TASKS;
@@ -14,24 +28,36 @@ export async function getTasks(): Promise<Task[]> {
       payload: {},
     },
     getTasksSchema,
-  ) as Task[];
-  return res || [];
+    {
+      failed: [],
+    },
+  );
+  const client = await _getClient();
+  const tasks = res.map(({ status: statusId, ...el }) => ({
+    ...el,
+    status: _statusIdToString(statusId, client),
+  }));
+  logger.debug("Tasks", tasks);
+  return tasks;
 }
 
 export async function saveTask(task: Task) {
   const action = APP_ACTIONS.TASK_UPDATE_TASK;
+  const client = await _getClient();
   await callApi(
     {
       action,
       payload: {
         taskId: task.id,
         title: task.title,
+        assigneeId: task.assigneeId,
         description: task.description,
         startDate: task.startDate,
+        status: _statusToId(task.status, client),
         endDate: task.endDate,
       },
     },
-    updateTaskSchema
+    updateTaskSchema,
   );
 }
 
@@ -41,13 +67,14 @@ export async function addNote(note: string, taskId: string) {
     {
       action,
       payload: {
-        note, taskId
+        note,
+        taskId,
       },
     },
     addNoteSchema,
     {
-      failed: null
-    }
+      failed: null,
+    },
   );
   return res?.noteId;
 }
@@ -59,9 +86,37 @@ export async function removeNote(noteId: string, taskId: string) {
       action,
       payload: {
         noteId,
-        taskId
+        taskId,
       },
     },
     removeNoteSchema,
   );
+}
+
+async function _getClient() {
+  let client = clientStore.getState().client;
+  if (!client) {
+    client = (await getMetaData()) || undefined;
+  }
+  return client;
+}
+
+function _statusIdToString(
+  statusId: number,
+  client?: ClientMetaData,
+) {
+  const statusMap = client?.tasks?.statusMap || {};
+  const [status] = statusMap[statusId] || ["Unknown", 0];
+  return status;
+}
+
+function _statusToId(status: string, client?: ClientMetaData) {
+  const statusMap = client?.tasks?.statusMap || {};
+  const map = Object.fromEntries(
+    Object.entries(statusMap).map(([key, [value]]) => [value, key]),
+  );
+  if (map[status] === undefined) {
+    throw new Error(`Unknown status: ${status}`);
+  }
+  return Number(map[status]);
 }

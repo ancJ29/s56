@@ -1,6 +1,14 @@
 import { APP_ACTIONS } from "@/configs/enums";
 import * as z from "zod";
-import { builder, numberSchema, optionalNumberSchema, optionalStringSchema, stringSchema, successSchema, timestampSchema } from "./_base";
+import {
+  builder,
+  numberSchema,
+  optionalNumberSchema,
+  optionalStringSchema,
+  stringSchema,
+  successSchema,
+  timestampSchema,
+} from "./_base";
 
 export const registerTaskSchema = builder({
   action: z.literal(APP_ACTIONS.TASK_REGISTER_TASK),
@@ -57,6 +65,20 @@ const noteSchema = z.object({
   updatedAt: timestampSchema,
 });
 
+const taskSchema = z.object({
+  id: stringSchema,
+  title: stringSchema,
+  description: stringSchema,
+  status: numberSchema,
+  assigneeId: optionalStringSchema,
+  reporterId: stringSchema,
+  notes: noteSchema.array(),
+  startDate: timestampSchema.optional(),
+  endDate: timestampSchema.optional(),
+  createdAt: timestampSchema,
+  updatedAt: timestampSchema,
+});
+
 export const getTasksSchema = builder({
   action: z.literal(APP_ACTIONS.TASK_GET_TASKS),
   params: z.object({
@@ -66,18 +88,7 @@ export const getTasksSchema = builder({
     limit: optionalNumberSchema,
     cursor: optionalStringSchema,
   }),
-  result: z.object({
-    id: stringSchema,
-    title: stringSchema,
-    description: stringSchema,
-    status: numberSchema,
-    assigneeId: optionalStringSchema,
-    notes: noteSchema.array(),
-    startDate: timestampSchema.optional(),
-    endDate: timestampSchema.optional(),
-    createdAt: timestampSchema,
-    updatedAt: timestampSchema,
-  }).array(),
+  result: taskSchema.array(),
 });
 
 export const getTaskSchema = builder({
@@ -85,20 +96,8 @@ export const getTaskSchema = builder({
   params: z.object({
     taskId: stringSchema,
   }),
-  result: z.object({
-    id: stringSchema,
-    title: stringSchema,
-    description: stringSchema,
-    status: numberSchema,
-    assigneeId: optionalStringSchema,
-    notes: noteSchema.array(),
-    startDate: timestampSchema.optional(),
-    endDate: timestampSchema.optional(),
-    createdAt: timestampSchema,
-    updatedAt: timestampSchema,
-  }),
+  result: taskSchema,
 });
-
 
 export const deleteTaskSchema = builder({
   action: z.literal(APP_ACTIONS.TASK_DELETE_TASK),

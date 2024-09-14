@@ -1,6 +1,12 @@
 import { APP_ACTIONS } from "@/configs/enums";
 import * as z from "zod";
-import { builder, numberSchema, passwordSchema, stringSchema, successSchema } from "./_base";
+import {
+  builder,
+  numberSchema,
+  passwordSchema,
+  stringSchema,
+  successSchema,
+} from "./_base";
 
 export const addUserByAdminSchema = builder({
   action: z.literal(APP_ACTIONS.USER_ADD_USER_BY_ADMIN),
@@ -11,7 +17,6 @@ export const addUserByAdminSchema = builder({
   }),
   result: successSchema,
 });
-
 
 export const markUserAsAdminSchema = builder({
   action: z.literal(APP_ACTIONS.USER_MARK_USER_AS_ADMIN),

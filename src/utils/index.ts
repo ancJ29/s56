@@ -13,6 +13,11 @@ export function isMd5(str: string) {
   return md5Regex.test(str);
 }
 
+// Sample: dropTime(Date.now(), ONE_DAY)
+export function dropTime(ts: number, span: number) {
+  return ts - (ts % span);
+}
+
 export function uuid() {
   // https://stackoverflow.com/a/8809472
   let d = new Date().getTime(); //Timestamp

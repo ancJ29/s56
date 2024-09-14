@@ -18,5 +18,23 @@ export const getClientMetaDataSchema = builder({
     code: stringSchema,
     enabled: z.boolean(),
     lang: languageSchema,
+    users: z
+      .record(
+        stringSchema,
+        z.object({
+          id: stringSchema,
+          userName: stringSchema,
+        }),
+      )
+      .optional(),
+    tasks: z
+      .object({
+        // Record<statusID, [displayName, order]>
+        statusMap: z.record(
+          stringSchema,
+          z.tuple([stringSchema, numberSchema]),
+        ),
+      })
+      .optional(),
   }),
 });

@@ -1,5 +1,9 @@
-import { Navigate } from "react-router-dom";
-
 export default function Blank() {
-  return <Navigate to="/tasks" />;
+  return (
+    <>
+      <div>
+        <h1>Blank</h1>
+      </div>
+    </>
+  );
 }

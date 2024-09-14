@@ -6,8 +6,20 @@ import {
   registerSchema,
 } from "./auth";
 import { getClientMetaDataSchema } from "./client";
-import { addNoteSchema, deleteTaskSchema, getTaskSchema, getTasksSchema, registerTaskSchema, removeNoteSchema, updateTaskSchema } from "./task";
-import { addUserByAdminSchema, markUserAsAdminSchema, markUserAsSystemAdminSchema } from "./user";
+import {
+  addNoteSchema,
+  deleteTaskSchema,
+  getTaskSchema,
+  getTasksSchema,
+  registerTaskSchema,
+  removeNoteSchema,
+  updateTaskSchema,
+} from "./task";
+import {
+  addUserByAdminSchema,
+  markUserAsAdminSchema,
+  markUserAsSystemAdminSchema,
+} from "./user";
 
 export const ACTION = z.enum([
   APP_ACTIONS.AUTH_REGISTER,

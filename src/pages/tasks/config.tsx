@@ -1,47 +1,50 @@
+import { Task } from "@/common/services/task";
+import { UserLabel } from "@/common/ui-components/UserManagement/UserLabel";
+import dayjs from "dayjs";
+
 export const configs = [
   {
-    key: "name",
-    field: "name",
-    label: "Task Name",
+    key: "title",
+    field: "title",
+    label: "Task",
     styles: {
-      tableTh: {
-        minWidth: "20vw",
+      mobile: {
+        content: {
+          maxWidth: "60%",
+          overflow: "hidden",
+          height: "1.5rem",
+        },
       },
     },
   },
   {
     key: "assignee",
-    field: "assignee",
     label: "Assignee",
+    render: (task: Task) => {
+      return <UserLabel size="1rem" userId={task.assigneeId} />;
+    },
+  },
+  {
+    key: "period",
+    label: "Period",
+    render: (task: Task) => {
+      return `${_dateString(task.startDate)} - ${_dateString(task.endDate)}`;
+    },
   },
   {
     key: "status",
-    field: "status",
     label: "Status",
-    styles: {
-      tableTh: {
-        minWidth: "10vw",
-      },
-    },
+    field: "status",
   },
   {
-    key: "endDate",
-    label: <span>Start Date 〜 End Date</span>,
-    styles: {
-      tableTh: {
-        minWidth: "10vw",
-      },
-    },
-    render(props: { startDate: string; endDate: string }) {
-      return (
-        <>
-          {props.startDate}
-          <br />
-          〜
-          <br />
-          {props.endDate}
-        </>
-      );
+    key: "reporter",
+    label: "Reporter",
+    render: (task: Task) => {
+      return <UserLabel size="1rem" userId={task.reporterId} />;
     },
   },
 ];
+
+function _dateString(ts?: number) {
+  return dayjs(ts).format("MMM. DD");
+}

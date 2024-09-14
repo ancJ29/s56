@@ -6,15 +6,18 @@ export type TableDataConfig<T extends UnknownRecord> = {
   field?: string;
   label?: string | React.ReactNode;
   styles?: {
-    tableTh?: MantineStyleProp
-  }
+    tableTh?: MantineStyleProp;
+    mobile?: {
+      content?: MantineStyleProp;
+    };
+  };
   render?: (props: T) => React.ReactNode;
 };
 
 export type TableData<T extends UnknownRecord> = {
   configs: TableDataConfig<T>[];
   styles?: {
-    tableTr?: MantineStyleProp
-  }
+    tableTr?: MantineStyleProp;
+  };
   data: T[];
 };

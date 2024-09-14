@@ -1,19 +1,17 @@
 import { getMetaData } from "@/common/services/client";
+import useAppStore from "@/common/stores/app";
 import useAuthStore from "@/common/stores/auth";
 import clientStore from "@/common/stores/client";
 import routes from "@/routes";
 import { resolver, theme } from "@/styles/theme/mantine-theme";
-import { MantineProvider } from "@mantine/core";
+import { LoadingOverlay, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { useEffect } from "react";
 import { useRoutes } from "react-router-dom";
-import logger from "./common/helpers/logger";
 
 function App() {
-  useEffect(() => {
-    logger.debug("App started", import.meta.env);
-  }, []);
   const { payload } = useAuthStore();
+  const { loading } = useAppStore();
   useEffect(() => {
     if (!payload?.id) {
       return;
@@ -31,6 +29,11 @@ function App() {
       cssVariablesResolver={resolver}
       defaultColorScheme="light"
     >
+      <LoadingOverlay
+        visible={loading}
+        zIndex={1000}
+        overlayProps={{ radius: "sm", blur: 10 }}
+      />
       {useRoutes(routes)}
       <Notifications />
     </MantineProvider>

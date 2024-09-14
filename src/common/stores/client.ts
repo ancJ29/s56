@@ -1,9 +1,6 @@
-import { getClientMetaDataSchema } from "@/configs/schema/client";
+import { ClientMetaData } from "@/configs/types";
 import { Dictionary } from "@/configs/types/base";
-import * as z from "zod";
 import { create } from "zustand";
-
-type ClientMetaData = z.infer<typeof getClientMetaDataSchema.result>;
 
 type ClientState = {
   id?: number;
@@ -12,6 +9,7 @@ type ClientState = {
     EN: Dictionary;
     VI: Dictionary;
   };
+  client?: ClientMetaData;
   updateClient: (client: ClientMetaData) => void;
 };
 
@@ -25,6 +23,7 @@ const clientStore = create<ClientState>((set) => ({
       id: client.id,
       name: client.name,
       lang: client.lang,
+      client,
     });
   },
 }));

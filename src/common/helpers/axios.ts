@@ -6,6 +6,7 @@ import _axios, { AxiosInstance } from "axios";
 import throttle from "lodash.throttle";
 import { LRUCache } from "lru-cache";
 import { Md5 } from "ts-md5";
+import appStore from "../stores/app";
 import logger from "./logger";
 
 let axios: AxiosInstance;
@@ -24,13 +25,31 @@ export async function callApi<A, P, R, F>(
     cached?: boolean;
     key?: string;
     ttl?: number; // in milliseconds
+    loading?: boolean;
   },
 ) {
   _browserOnly();
+  const triggerLoading = opt?.loading !== false;
+  if (opt?.key && cache.has(opt?.key)) {
+    return cache.get(opt.key) as R;
+  }
+  if (triggerLoading) {
+    appStore.getState().triggerLoading();
+  }
   try {
-    if (opt?.key && cache.has(opt?.key)) {
-      return cache.get(opt.key) as R;
+    const res = await _run();
+    if (triggerLoading) {
+      appStore.getState().stopLoading();
     }
+    return res;
+  } catch (error) {
+    if (triggerLoading) {
+      appStore.getState().stopLoading();
+    }
+    throw error;
+  }
+
+  async function _run() {
     const res = await _apiRequest(
       schema.payload.parse({ action, payload }),
     );
@@ -56,11 +75,6 @@ export async function callApi<A, P, R, F>(
       return opt.failed;
     }
     throw new Error("API request failed");
-  } catch (error) {
-    if (opt?.failed !== undefined) {
-      return opt?.failed;
-    }
-    throw error;
   }
 }
 
@@ -92,7 +106,7 @@ function _buildBrowserAxiosInstance() {
     baseURL: import.meta.env.APP_API_URL,
     headers: {
       "Content-type": "application/json",
-      "X-CLIENT-ID": 2,
+      "X-CLIENT-ID": import.meta.env.APP_CLIENT_ID,
       "X-LANG": localStorage.__LANGUAGE__,
     },
   });

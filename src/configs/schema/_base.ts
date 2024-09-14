@@ -23,7 +23,6 @@ export const passwordSchema = stringSchema;
 //   return v;
 // });
 
-
 export function builder<A, P, R>(
   schema: Omit<ServiceSchema<A, P, R>, "payload"> & {
     payload?: z.ZodObject<{
