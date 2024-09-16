@@ -26,6 +26,7 @@ export async function getMetaData() {
   );
   logger.info("meta data", res);
   if (!res) {
+    logger.error("Failed to get meta data");
     authStore.getState().logout();
   }
   return res;
