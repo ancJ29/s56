@@ -17,6 +17,8 @@ export const registerTaskSchema = builder({
     description: stringSchema,
     assigneeId: optionalStringSchema,
     status: numberSchema,
+    startDate: timestampSchema.optional(),
+    endDate: timestampSchema.optional(),
   }),
   result: z.object({
     taskId: stringSchema,

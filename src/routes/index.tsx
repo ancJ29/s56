@@ -20,9 +20,14 @@ const routes = [
     element: lazy(() => import("@/pages/clients")),
   },
   {
-    path: "/tasks",
+    path: "/task-management",
     wrappers: ["Auth", "CollapseAppShell"],
     element: lazy(() => import("@/pages/tasks")),
+  },
+  {
+    path: "/user-management",
+    wrappers: ["Auth", "CollapseAppShell"],
+    element: lazy(() => import("@/pages/users")),
   },
   {
     path: "/logout",

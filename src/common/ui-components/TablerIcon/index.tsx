@@ -3,6 +3,7 @@ import {
   Icon,
   Icon2fa,
   IconBellRinging,
+  IconChecklist,
   IconDatabaseImport,
   IconFingerprint,
   IconKey,
@@ -20,6 +21,7 @@ const IconMap: Record<
     IconProps & React.RefAttributes<Icon>
   >
 > = {
+  [APP_ICONS.IconChecklist]: IconChecklist,
   [APP_ICONS.IconUsersGroup]: IconUsersGroup,
   [APP_ICONS.Icon2fa]: Icon2fa,
   [APP_ICONS.IconBellRinging]: IconBellRinging,

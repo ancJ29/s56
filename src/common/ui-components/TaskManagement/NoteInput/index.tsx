@@ -3,12 +3,19 @@ import useTranslation from "@/common/hooks/useTranslation";
 import { Box, Button, Flex, Text, Textarea } from "@mantine/core";
 import { useState } from "react";
 
-function Input({ onSave }: { onSave?: (_: string) => void }) {
+function Input({
+  disabled,
+  onSave,
+}: {
+  disabled?: boolean;
+  onSave?: (_: string) => void;
+}) {
   const [note, setNote] = useState("");
 
   return (
     <>
       <Textarea
+        disabled={disabled}
         rows={5}
         value={note}
         onChange={(e) => {
@@ -17,6 +24,7 @@ function Input({ onSave }: { onSave?: (_: string) => void }) {
       />
       <Flex justify="end" mt=".3rem">
         <Button
+          disabled={disabled || !note.trim().length}
           w="5rem"
           size="xs"
           fz={10}
@@ -39,8 +47,10 @@ function Input({ onSave }: { onSave?: (_: string) => void }) {
 }
 
 export function NoteInput({
+  disabled,
   onSave,
 }: {
+  disabled?: boolean;
   onSave?: (_: string) => void;
 }) {
   const t = useTranslation();
@@ -50,7 +60,7 @@ export function NoteInput({
       <Text fw="600" mt="xs">
         {t("Add your note")}
       </Text>
-      <Input onSave={onSave} />
+      <Input disabled={disabled} onSave={onSave} />
       {/* <Flex hiddenFrom="md" justify="end">
         <Button
           size="xs"

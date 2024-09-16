@@ -4,6 +4,7 @@ import useIsMobile from "@/common/hooks/useIsMobile";
 import useTranslation from "@/common/hooks/useTranslation";
 import {
   addNote,
+  register,
   removeNote,
   saveTask,
   Task,
@@ -49,6 +50,7 @@ export function TaskContent({
   const isMobile = useIsMobile();
   const { payload } = useAuthStore();
   const [form, setForm] = useState({ ...task });
+  const isNew = !!form.id;
 
   const onNoteSaved = useCallback((note: string) => {
     const notes = form.notes || [];
@@ -87,18 +89,34 @@ export function TaskContent({
       >
         <Flex align="center" justify="start" gap="sm" mb="xs">
           <IconArrowLeft onClick={onClose} />
-          <Text fw="bold">{form.title}</Text>
+          {isNew ? (
+            <Text fw="bold">{form.title}</Text>
+          ) : (
+            <TextInput
+              w="100%"
+              placeholder={t("Title")}
+              value={form.title}
+              onChange={(e) => {
+                setForm({ ...form, title: e.currentTarget.value });
+              }}
+            />
+          )}
         </Flex>
         <TitleAndDescription form={form} setForm={setForm} />
         <Tabs defaultValue="information">
           <Tabs.List>
             <Tabs.Tab
+              disabled={!isNew}
               value="information"
               leftSection={<IconInfoCircle />}
             >
               {t("Information")}
             </Tabs.Tab>
-            <Tabs.Tab value="notes" leftSection={<IconMessage />}>
+            <Tabs.Tab
+              disabled={!isNew}
+              value="notes"
+              leftSection={<IconMessage />}
+            >
               {t("Notes")}
             </Tabs.Tab>
           </Tabs.List>
@@ -113,7 +131,10 @@ export function TaskContent({
           </Tabs.Panel>
           <Tabs.Panel value="notes">
             <Notes form={form} setForm={setForm} />
-            <NoteInput onSave={onNoteSaved} />
+            <NoteInput
+              disabled={!Boolean(form.id)}
+              onSave={onNoteSaved}
+            />
           </Tabs.Panel>
         </Tabs>
       </Container>
@@ -139,7 +160,7 @@ export function TaskContent({
       <Divider my={"1rem"} />
       <Notes form={form} setForm={setForm} />
       <Divider my={"1rem"} />
-      <NoteInput onSave={onNoteSaved} />
+      <NoteInput disabled={!Boolean(form.id)} onSave={onNoteSaved} />
     </Container>
   );
 }
@@ -165,18 +186,33 @@ function SaveTaskButton({
             failed("Invalid request", "Nothing to save!");
             return;
           }
-          saveTask(form)
-            .then(() => {
-              success("Task updated", "Your task is updated!");
-              onSave?.(form);
-              onClose?.();
-            })
-            .catch(() => {
-              failed(
-                "Something went wrong",
-                "Can not save your task!!!",
-              );
-            });
+          if (form.id) {
+            saveTask(form)
+              .then(() => {
+                success("Task updated", "Your task is updated!");
+                onSave?.(form);
+                onClose?.();
+              })
+              .catch(() => {
+                failed(
+                  "Something went wrong",
+                  "Can not save your task!!!",
+                );
+              });
+          } else {
+            register(form)
+              .then(() => {
+                success("Task saved", "Your task is saved!");
+                onSave?.(form);
+                onClose?.();
+              })
+              .catch(() => {
+                failed(
+                  "Something went wrong",
+                  "Can not save your task!!!",
+                );
+              });
+          }
         }}
       >
         {t("Save")}

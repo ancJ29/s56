@@ -5,7 +5,7 @@ import {
   loginSchema,
   registerSchema,
 } from "./auth";
-import { getClientMetaDataSchema } from "./client";
+import { getClientMetaDataSchema, updateTranslationSchema } from "./client";
 import {
   addNoteSchema,
   deleteTaskSchema,
@@ -17,6 +17,7 @@ import {
 } from "./task";
 import {
   addUserByAdminSchema,
+  getAllUserSchema,
   markUserAsAdminSchema,
   markUserAsSystemAdminSchema,
 } from "./user";
@@ -35,7 +36,9 @@ export const C_SERVICE_SCHEMA = {
       loginSchema.payload,
       registerSchema.payload,
       getClientMetaDataSchema.payload,
+      updateTranslationSchema.payload,
       addUserByAdminSchema.payload,
+      getAllUserSchema.payload,
       markUserAsAdminSchema.payload,
       markUserAsSystemAdminSchema.payload,
       getTasksSchema.payload,
@@ -50,7 +53,9 @@ export const C_SERVICE_SCHEMA = {
       loginSchema.result,
       registerSchema.result,
       getClientMetaDataSchema.result,
+      updateTranslationSchema.result,
       addUserByAdminSchema.result,
+      getAllUserSchema.result,
       markUserAsAdminSchema.result,
       markUserAsSystemAdminSchema.result,
       getTasksSchema.result,

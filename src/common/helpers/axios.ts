@@ -11,11 +11,11 @@ import logger from "./logger";
 
 let axios: AxiosInstance;
 
-export async function callApi<A, P, R, F>(
+export async function callApi<A, P, R>(
   { action, payload }: RequestPayload,
   schema: ServiceSchema<A, P, R>,
   opt?: {
-    failed: F;
+    failed: R | null | undefined;
     cached?: boolean;
     key?: string;
     ttl?: number; // in milliseconds

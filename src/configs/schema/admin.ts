@@ -19,14 +19,15 @@ export const addClientSchema = builder({
 
 export const iconSchema = z.enum([
   APP_ICONS.Icon2fa,
-  APP_ICONS.IconUsersGroup,
   APP_ICONS.IconBellRinging,
+  APP_ICONS.IconChecklist,
   APP_ICONS.IconDatabaseImport,
   APP_ICONS.IconFingerprint,
   APP_ICONS.IconKey,
   APP_ICONS.IconLogout,
   APP_ICONS.IconReceipt2,
   APP_ICONS.IconSettings,
+  APP_ICONS.IconUsersGroup,
 ]);
 
 export const menuItemSchema = z.object({

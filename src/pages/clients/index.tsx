@@ -2,7 +2,7 @@ import { SimpleResponsiveTable } from "@/common/ui-components/Table/SimpleRespon
 import { useViewportSize } from "@mantine/hooks";
 import { configs, data } from "./config";
 
-export default function Client() {
+export default function Clients() {
   const { height } = useViewportSize();
 
   return (

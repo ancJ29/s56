@@ -1,13 +1,18 @@
 import useIsMobile from "@/common/hooks/useIsMobile";
 import useTranslation from "@/common/hooks/useTranslation";
-import { getTasks, type Task } from "@/common/services/task";
+import {
+  blankTask,
+  getTasks,
+  type Task,
+} from "@/common/services/task";
 import appStore from "@/common/stores/app";
 import { CDrawer } from "@/common/ui-components/CKits/CDrawer";
 import { MobileDataList } from "@/common/ui-components/Table/MobileDataList";
 import { GanttChart } from "@/common/ui-components/TaskManagement/GanttChart";
 import { TaskContent } from "@/common/ui-components/TaskManagement/TaskContent";
-import { Box, Flex, Switch } from "@mantine/core";
+import { ActionIcon, Affix, Box, Flex, Switch } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { IconPlus } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
 import { configs } from "./config";
 
@@ -28,12 +33,18 @@ export default function Tasks() {
   }, []);
 
   const selectTask = useCallback(
-    (taskId: string) => {
-      const task = tasks.find((el) => el.id === taskId);
-      if (task) {
-        setSelectedTask(task);
-        isMobile ? appStore.getState().hideHeader() : open();
+    (taskId?: string) => {
+      let task: Task | undefined;
+      if (taskId) {
+        task = tasks.find((el) => el.id === taskId);
+      } else {
+        task = blankTask();
       }
+      if (!task) {
+        return;
+      }
+      setSelectedTask(task);
+      isMobile ? appStore.getState().hideHeader() : open();
     },
     [open, tasks, isMobile],
   );
@@ -45,6 +56,10 @@ export default function Tasks() {
 
   const onTaskSaved = useCallback(
     (task?: Task) => {
+      if (!task?.id) {
+        window.location.reload();
+        return;
+      }
       if (task) {
         setTasks(
           tasks.map((el) => {
@@ -69,10 +84,22 @@ export default function Tasks() {
       />
     );
   }
-
   return (
     <>
       <ViewSwitcher dense={dense} onToggle={toggle} />
+      <Affix position={{ bottom: 20, right: 20 }}>
+        <ActionIcon
+          variant="filled"
+          bg={"primary.8"}
+          c="white"
+          radius="xl"
+        >
+          <IconPlus
+            onClick={() => selectTask()}
+            style={{ cursor: "pointer" }}
+          />
+        </ActionIcon>
+      </Affix>
       <MobileDataList
         scrollAreaHeight="100%"
         onClick={(task) => selectTask(task.id)}

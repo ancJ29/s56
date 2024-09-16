@@ -4,6 +4,7 @@ import { APP_ACTIONS } from "@/configs/enums/actions";
 import {
   addNoteSchema,
   getTasksSchema,
+  registerTaskSchema,
   removeNoteSchema,
   updateTaskSchema,
 } from "@/configs/schema/task";
@@ -28,17 +29,34 @@ export async function getTasks(): Promise<Task[]> {
       payload: {},
     },
     getTasksSchema,
-    {
-      failed: [],
-    },
   );
   const client = await _getClient();
-  const tasks = res.map(({ status: statusId, ...el }) => ({
+  const tasks = res?.map(({ status: statusId, ...el }) => ({
     ...el,
     status: _statusIdToString(statusId, client),
   }));
   logger.debug("Tasks", tasks);
-  return tasks;
+  return tasks || [];
+}
+
+export async function register(task: Task) {
+  const action = APP_ACTIONS.TASK_REGISTER_TASK;
+  const client = await _getClient();
+  const res = await callApi(
+    {
+      action,
+      payload: {
+        title: task.title,
+        assigneeId: task.assigneeId,
+        description: task.description,
+        status: _statusToId(task.status, client),
+        startDate: task.startDate,
+        endDate: task.endDate,
+      },
+    },
+    registerTaskSchema,
+  );
+  return res?.taskId;
 }
 
 export async function saveTask(task: Task) {
@@ -91,6 +109,19 @@ export async function removeNote(noteId: string, taskId: string) {
     },
     removeNoteSchema,
   );
+}
+
+export function blankTask(): Task {
+  return {
+    id: "",
+    title: "",
+    description: "",
+    reporterId: "",
+    status: _statusIdToString(0),
+    notes: [],
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+  };
 }
 
 export function statusColors() {
