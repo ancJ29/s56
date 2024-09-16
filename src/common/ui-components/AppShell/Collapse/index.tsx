@@ -1,7 +1,8 @@
+import useTranslation from "@/common/hooks/useTranslation";
 import useAppStore from "@/common/stores/app";
 import { WrapperComponentProps } from "@/common/types";
 import { SimpleNavbar } from "@/common/ui-components/Navbar/Simple";
-import { AppShell, Burger, Group } from "@mantine/core";
+import { AppShell, Burger, Group, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 
 // Ref: https://mantine.dev/app-shell/?e=CollapseDesktop&s=demo
@@ -9,10 +10,12 @@ import { useDisclosure } from "@mantine/hooks";
 export default function CollapseAppShell({
   children,
 }: WrapperComponentProps) {
+  const t = useTranslation();
+
   // prettier-ignore
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
-  const { display } = useAppStore();
+  const { display, title } = useAppStore();
 
   return (
     <AppShell
@@ -39,6 +42,7 @@ export default function CollapseAppShell({
             visibleFrom="sm"
             size="sm"
           />
+          <Text fw="bold">{t(title)}</Text>
         </Group>
       </AppShell.Header>
       <AppShell.Navbar p="md">

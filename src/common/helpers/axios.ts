@@ -4,18 +4,12 @@ import { ServiceSchema } from "@/configs/types/base";
 import { ONE_DAY, ONE_HOUR } from "@/constants";
 import _axios, { AxiosInstance } from "axios";
 import throttle from "lodash.throttle";
-import { LRUCache } from "lru-cache";
 import { Md5 } from "ts-md5";
 import appStore from "../stores/app";
+import { cache } from "./cache";
 import logger from "./logger";
 
 let axios: AxiosInstance;
-
-const cache = new LRUCache({
-  // https://www.npmjs.com/package/lru-cache
-  max: 1000,
-  ttl: 1000 * 60 * 5,
-});
 
 export async function callApi<A, P, R, F>(
   { action, payload }: RequestPayload,

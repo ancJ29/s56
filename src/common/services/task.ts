@@ -9,9 +9,9 @@ import {
 } from "@/configs/schema/task";
 import { ClientMetaData } from "@/configs/types";
 import * as z from "zod";
+import { cache } from "../helpers/cache";
 import logger from "../helpers/logger";
 import { getMetaData } from "./client";
-
 type TaskFromServer = z.infer<typeof getTasksSchema.result>[0];
 
 export type Task = Omit<TaskFromServer, "status"> & {
@@ -91,6 +91,20 @@ export async function removeNote(noteId: string, taskId: string) {
     },
     removeNoteSchema,
   );
+}
+
+export function statusColors() {
+  if (cache.has("statusColors")) {
+    return cache.get("statusColors") as Record<string, string>;
+  }
+  const client = clientStore.getState().client;
+  const colors = Object.fromEntries(
+    Object.values(client?.tasks?.statusMap || {}).map(
+      ([value, , color]) => [value, color],
+    ),
+  );
+  cache.set("statusColors", colors, { ttl: 1000 * 60 * 60 });
+  return colors;
 }
 
 async function _getClient() {

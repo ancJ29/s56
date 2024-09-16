@@ -3,10 +3,6 @@
   width: rem(300px);
   padding: var(--mantine-spacing-none);
   display: flex;
-  /* background-color: light-dark(
-    var(--mantine-color-blue-1),
-    var(--mantine-color-dark-5)
-  ); */
   flex-direction: column;
   border-right: rem(1px) solid
     light-dark(
@@ -63,11 +59,11 @@
   &[data-active] {
     &,
     &:hover {
-      background-color: var(--mantine-color-blue-light);
-      color: var(--mantine-color-blue-light-color);
+      background-color: var(--mantine-color-primary-light);
+      color: var(--mantine-color-primary-light-color);
 
       .linkIcon {
-        color: var(--mantine-color-blue-light-color);
+        color: var(--mantine-color-primary-light-color);
       }
     }
   }

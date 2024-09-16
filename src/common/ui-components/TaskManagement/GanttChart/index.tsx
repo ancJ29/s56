@@ -1,3 +1,4 @@
+import useIsMobile from "@/common/hooks/useIsMobile";
 import useTranslation from "@/common/hooks/useTranslation";
 import { Task } from "@/common/services/task";
 import { ONE_DAY } from "@/constants";
@@ -15,8 +16,8 @@ import clsx from "clsx";
 import dayjs from "dayjs";
 import { useMemo } from "react";
 import { UserLabel } from "../../UserManagement/UserLabel";
+import { StatusBadge } from "../StatusBadge";
 import classes from "./styles.module.scss";
-import useIsMobile from "@/common/hooks/useIsMobile";
 
 export function GanttChart({
   tasks,
@@ -149,9 +150,7 @@ export function GanttChart({
                                   userId={task.assigneeId}
                                 />
                               </Flex>
-                              <span>
-                                {t("Status")}: {task.status}
-                              </span>
+                              <StatusBadge status={task.status} />
                             </Flex>
                           </>
                         )}
@@ -178,13 +177,14 @@ export function GanttChart({
                     </Flex>
                   </Table.Td>
                   <Table.Td
+                    w="6rem"
                     className={clsx(
                       classes.dateCell,
                       classes.ceilHeight,
                     )}
                     hidden={dense}
                   >
-                    {task.status}
+                    <StatusBadge status={task.status} />
                   </Table.Td>
                   <Table.Td
                     className={clsx(

@@ -21,6 +21,7 @@ export default function Tasks() {
   );
 
   useEffect(() => {
+    appStore.getState().setTitle("Task Management");
     getTasks().then((tasks) => {
       setTasks(tasks);
     });

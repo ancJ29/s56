@@ -1,4 +1,5 @@
 import { Task } from "@/common/services/task";
+import { StatusBadge } from "@/common/ui-components/TaskManagement/StatusBadge";
 import { UserLabel } from "@/common/ui-components/UserManagement/UserLabel";
 import dayjs from "dayjs";
 
@@ -34,7 +35,9 @@ export const configs = [
   {
     key: "status",
     label: "Status",
-    field: "status",
+    render: (task: Task) => {
+      return <StatusBadge status={task.status} />;
+    },
   },
   {
     key: "reporter",

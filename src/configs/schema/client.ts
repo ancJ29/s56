@@ -32,7 +32,7 @@ export const getClientMetaDataSchema = builder({
         // Record<statusID, [displayName, order]>
         statusMap: z.record(
           stringSchema,
-          z.tuple([stringSchema, numberSchema]),
+          z.tuple([stringSchema, numberSchema, stringSchema]),
         ),
       })
       .optional(),

@@ -85,7 +85,10 @@ export function TaskContent({
           flexDirection: "column",
         }}
       >
-        <IconArrowLeft onClick={onClose} />
+        <Flex align="center" justify="start" gap="sm" mb="xs">
+          <IconArrowLeft onClick={onClose} />
+          <Text fw="bold">{form.title}</Text>
+        </Flex>
         <TitleAndDescription form={form} setForm={setForm} />
         <Tabs defaultValue="information">
           <Tabs.List>
