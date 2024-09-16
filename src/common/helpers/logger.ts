@@ -29,12 +29,14 @@ export default {
 const IS_DEBUG = localStorage.__DEBUG__ === "JDHdHg23KfF4";
 
 function _log(level: Level, ...args: unknown[]) {
+  if (IS_DEBUG) {
+    console.log(level, ...args); // eslint-disable-line no-console
+    return;
+  }
   if (IS_DEV) {
     const lvl = (map[level] || 0)
     if (lvl < threshold) {
       console.log(level, ...args); // eslint-disable-line no-console
     }
-  } else if (IS_DEBUG) {
-    console.log(level, ...args); // eslint-disable-line no-console
   }
 }

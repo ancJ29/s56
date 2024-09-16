@@ -39,6 +39,7 @@ export default function Login() {
     logger.info("User already logged in", payload);
     return <Navigate to="/dashboard" />;
   }
+  logger.trace("Login page rendered");
   return (
     <Flex w="100dvw" h="100dvh" align="center" justify="center">
       <Center>
