@@ -100,7 +100,7 @@ export function statusColors() {
   const client = clientStore.getState().client;
   const colors = Object.fromEntries(
     Object.values(client?.tasks?.statusMap || {}).map(
-      ([value, , color]) => [value, color],
+      ([value, , color, bg]) => [value, [color, bg]],
     ),
   );
   cache.set("statusColors", colors, { ttl: 1000 * 60 * 60 });

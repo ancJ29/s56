@@ -14,7 +14,7 @@ export interface ClientSpecificCustomHandler {
      * statusMapGenerator is a function that
      * returns a Record<statusID, [displayName, order]>
      */
-    statusMapGenerator?: () => Record<number, [string, TaskStatusOrder, ColorCode]>;
+    statusMapGenerator?: () => Record<number, [string, TaskStatusOrder, ColorCode, ColorCode]>;
     statusMapper?: (status: string) => number;
     statusValidator?: (_: number) => boolean;
   };

@@ -29,10 +29,10 @@ export const getClientMetaDataSchema = builder({
       .optional(),
     tasks: z
       .object({
-        // Record<statusID, [displayName, order]>
+        // Record<statusID, [displayName, order, textColor, bgColor]>
         statusMap: z.record(
           stringSchema,
-          z.tuple([stringSchema, numberSchema, stringSchema]),
+          z.tuple([stringSchema, numberSchema, stringSchema, stringSchema]),
         ),
       })
       .optional(),
