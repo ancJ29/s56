@@ -3,7 +3,12 @@ import logger from "../helpers/logger";
 
 type AppState = {
   loading: boolean;
+  display: {
+    header: boolean;
+  },
   triggerLoading: () => void;
+  hideHeader: () => void;
+  showHeader: () => void;
   stopLoading: () => void;
 };
 
@@ -11,6 +16,15 @@ let timer: NodeJS.Timeout;
 
 const appStore = create<AppState>((set) => ({
   loading: false,
+  display: {
+    header: true,
+  },
+  hideHeader: () => {
+    set({ display: { header: false } });
+  },
+  showHeader: () => {
+    set({ display: { header: true } });
+  },
   triggerLoading: () => {
     set({ loading: true });
     if (timer) {

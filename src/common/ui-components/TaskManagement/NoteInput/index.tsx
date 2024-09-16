@@ -1,8 +1,6 @@
 import { failed } from "@/common/helpers/toast";
-import useIsMobile from "@/common/hooks/useIsMobile";
 import useTranslation from "@/common/hooks/useTranslation";
 import { Box, Button, Flex, Text, Textarea } from "@mantine/core";
-import { modals } from "@mantine/modals";
 import { useState } from "react";
 
 function Input({ onSave }: { onSave?: (_: string) => void }) {
@@ -46,13 +44,14 @@ export function NoteInput({
   onSave?: (_: string) => void;
 }) {
   const t = useTranslation();
-  const isMobile = useIsMobile();
+  // const isMobile = useIsMobile();
   return (
     <Box>
-      <Text fw="600" mt="15px" visibleFrom="md">
+      <Text fw="600" mt="xs">
         {t("Add your note")}
       </Text>
-      <Flex hiddenFrom="md" justify="end">
+      <Input onSave={onSave} />
+      {/* <Flex hiddenFrom="md" justify="end">
         <Button
           size="xs"
           mt="5px"
@@ -81,7 +80,7 @@ export function NoteInput({
           {t("Add your note")}
         </Button>
       </Flex>
-      {isMobile ? <></> : <Input onSave={onSave} />}
+      {isMobile ? <></> : <Input onSave={onSave} />} */}
     </Box>
   );
 }

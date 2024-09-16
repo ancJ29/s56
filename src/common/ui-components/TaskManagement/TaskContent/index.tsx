@@ -19,7 +19,6 @@ import {
   Flex,
   ScrollArea,
   SimpleGrid,
-  Space,
   Stack,
   Tabs,
   Text,
@@ -27,9 +26,13 @@ import {
   TextInput,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
-import { IconInfoCircle, IconMessage } from "@tabler/icons-react";
+import {
+  IconArrowLeft,
+  IconInfoCircle,
+  IconMessage,
+} from "@tabler/icons-react";
 import deepEqual from "lodash.isequal";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { UserSelector } from "../../UserManagement/UserSelector";
 import { StatusSelector } from "../StatusSelector";
 
@@ -46,16 +49,43 @@ export function TaskContent({
   const isMobile = useIsMobile();
   const { payload } = useAuthStore();
   const [form, setForm] = useState({ ...task });
+
+  const onNoteSaved = useCallback((note: string) => {
+    const notes = form.notes || [];
+    if (!payload?.userName) {
+      throw new Error("Invalid payload");
+    }
+    addNote(note, task.id).then((noteId) => {
+      if (noteId) {
+        const now = Date.now();
+        notes.push({
+          id: noteId,
+          content: note,
+          userName: payload?.userName,
+          createdAt: now,
+          updatedAt: now,
+        });
+        setForm({ ...form, notes });
+        success("Success", "Your note is added to the task");
+      } else {
+        failed("Something went wrong", "Can not save your note!!!");
+      }
+    });
+  }, []);
+
+  if (!task) {
+    return <></>;
+  }
+
   if (isMobile) {
     return (
       <Container
         display="flex"
-        h={isMobile ? undefined : "98dvh"}
         style={{
-          position: "relative",
           flexDirection: "column",
         }}
       >
+        <IconArrowLeft onClick={onClose} />
         <TitleAndDescription form={form} setForm={setForm} />
         <Tabs defaultValue="information">
           <Tabs.List>
@@ -79,37 +109,8 @@ export function TaskContent({
             />
           </Tabs.Panel>
           <Tabs.Panel value="notes">
-            <NoteInput
-              onSave={(note) => {
-                const notes = form.notes || [];
-                if (!payload?.userName) {
-                  throw new Error("Invalid payload");
-                }
-                addNote(note, task.id).then((noteId) => {
-                  if (noteId) {
-                    const now = Date.now();
-                    notes.push({
-                      id: noteId,
-                      content: note,
-                      userName: payload?.userName,
-                      createdAt: now,
-                      updatedAt: now,
-                    });
-                    setForm({ ...form, notes });
-                    success(
-                      "Success",
-                      "Your note is added to the task",
-                    );
-                  } else {
-                    failed(
-                      "Something went wrong",
-                      "Can not save your note!!!",
-                    );
-                  }
-                });
-              }}
-            />
             <Notes form={form} setForm={setForm} />
+            <NoteInput onSave={onNoteSaved} />
           </Tabs.Panel>
         </Tabs>
       </Container>
@@ -125,7 +126,6 @@ export function TaskContent({
       }}
     >
       <TitleAndDescription form={form} setForm={setForm} />
-      <Space h=".5rem" />
       <Attributes form={form} setForm={setForm} />
       <SaveTaskButton
         task={task}
@@ -136,33 +136,7 @@ export function TaskContent({
       <Divider my={"1rem"} />
       <Notes form={form} setForm={setForm} />
       <Divider my={"1rem"} />
-      <NoteInput
-        onSave={(note) => {
-          const notes = form.notes || [];
-          if (!payload?.userName) {
-            throw new Error("Invalid payload");
-          }
-          addNote(note, task.id).then((noteId) => {
-            if (noteId) {
-              const now = Date.now();
-              notes.push({
-                id: noteId,
-                content: note,
-                userName: payload?.userName,
-                createdAt: now,
-                updatedAt: now,
-              });
-              setForm({ ...form, notes });
-              success("Success", "Your note is added to the task");
-            } else {
-              failed(
-                "Something went wrong",
-                "Can not save your note!!!",
-              );
-            }
-          });
-        }}
-      />
+      <NoteInput onSave={onNoteSaved} />
     </Container>
   );
 }
@@ -208,23 +182,6 @@ function SaveTaskButton({
   );
 }
 
-export function BrowserView({ task }: { task: Task }) {
-  const [isOpen, setIsOpen] = useState(false);
-  return (
-    <Flex
-      justify="center"
-      align="center"
-      onClick={() => setIsOpen(!isOpen)}
-    >
-      {isOpen ? (
-        <TaskContent task={task} />
-      ) : (
-        <Text>Click to open</Text>
-      )}
-    </Flex>
-  );
-}
-
 function Notes({
   form,
   setForm,
@@ -259,13 +216,13 @@ function Notes({
   }
   return (
     <>
-      <Text fw="600">
+      <Text fw="600" my="xs">
         {t("Notes")} ({form.notes?.length || 0})
       </Text>
       <ScrollArea
         style={{
           flexGrow: 1,
-          height: isMobile ? "30dvh" : undefined,
+          height: isMobile ? "40dvh" : undefined,
         }}
       >
         <Stack gap="1rem">
@@ -354,8 +311,12 @@ function Attributes({
         }}
       >
         <SimpleGrid cols={2}>
-          <Text fw="600">{t("Assignee")}</Text>
-          <Text fw="600">{t("Status")}</Text>
+          <Text my="xs" fw="600">
+            {t("Assignee")}
+          </Text>
+          <Text my="xs" fw="600">
+            {t("Status")}
+          </Text>
           <UserSelector
             value={form.assigneeId}
             onChange={(assigneeId) => {
@@ -374,8 +335,12 @@ function Attributes({
           />
         </SimpleGrid>
         <SimpleGrid cols={2}>
-          <Text fw="600">{t("Start date")}</Text>
-          <Text fw="600">{t("End date")}</Text>
+          <Text my="xs" fw="600">
+            {t("Start date")}
+          </Text>
+          <Text my="xs" fw="600">
+            {t("End date")}
+          </Text>
 
           <DateInput
             value={

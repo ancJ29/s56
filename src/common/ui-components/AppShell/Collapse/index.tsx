@@ -1,3 +1,4 @@
+import useAppStore from "@/common/stores/app";
 import { WrapperComponentProps } from "@/common/types";
 import { SimpleNavbar } from "@/common/ui-components/Navbar/Simple";
 import { AppShell, Burger, Group } from "@mantine/core";
@@ -11,10 +12,12 @@ export default function CollapseAppShell({
   // prettier-ignore
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
+  const { display } = useAppStore();
 
   return (
     <AppShell
-      header={{ height: 60 }}
+      transitionDuration={300}
+      header={{ height: display.header ? 60 : 0 }}
       navbar={{
         width: 300,
         breakpoint: "sm",
@@ -22,7 +25,7 @@ export default function CollapseAppShell({
       }}
       padding="md"
     >
-      <AppShell.Header>
+      <AppShell.Header hidden={!display.header}>
         <Group h="100%" px="md">
           <Burger
             opened={mobileOpened}

@@ -1,3 +1,4 @@
+import useIsMobile from "@/common/hooks/useIsMobile";
 import { TableData, TableDataConfig } from "@/common/types";
 import { UnknownRecord } from "@/configs/types";
 import {
@@ -23,6 +24,10 @@ export function MobileDataList<T extends UnknownRecord>({
   scrollAreaHeight = "100%",
   onClick,
 }: MobileDataListProps<T>) {
+  const isMobile = useIsMobile();
+  if (!isMobile) {
+    return <></>;
+  }
   return (
     <>
       <ScrollArea h={scrollAreaHeight} hiddenFrom="md">

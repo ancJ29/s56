@@ -16,6 +16,7 @@ import dayjs from "dayjs";
 import { useMemo } from "react";
 import { UserLabel } from "../../UserManagement/UserLabel";
 import classes from "./styles.module.scss";
+import useIsMobile from "@/common/hooks/useIsMobile";
 
 export function GanttChart({
   tasks,
@@ -30,6 +31,7 @@ export function GanttChart({
   tasks: Task[];
   onSelectTask: (taskId: string) => void;
 }) {
+  const isMobile = useIsMobile();
   const t = useTranslation();
   const baseWidth = 40;
   const dw = 75;
@@ -49,6 +51,9 @@ export function GanttChart({
     total = Math.max(total, 7);
     return { startFrom: first, total };
   }, [tasks]);
+  if (isMobile) {
+    return <></>;
+  }
   return (
     <>
       <Container
