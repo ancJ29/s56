@@ -42,7 +42,7 @@ export default function Users() {
   if (isMobile && opened) {
     return (
       <CMobileFull title={t("Add new user")} onClose={close}>
-        <InputForm />;
+        <InputForm />
       </CMobileFull>
     );
   }

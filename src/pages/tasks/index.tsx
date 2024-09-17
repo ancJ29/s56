@@ -1,3 +1,4 @@
+import logger from "@/common/helpers/logger";
 import useIsMobile from "@/common/hooks/useIsMobile";
 import useTranslation from "@/common/hooks/useTranslation";
 import {
@@ -16,13 +17,14 @@ import { TaskContent } from "@/common/ui-components/TaskManagement/TaskContent";
 import { UserSelector } from "@/common/ui-components/UserManagement/UserSelector";
 import { Flex, Switch, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
+import { useCounter, useDisclosure } from "@mantine/hooks";
 import { useCallback, useEffect, useState } from "react";
 import { configs } from "./config";
 
 export default function Tasks() {
   const isMobile = useIsMobile();
   const t = useTranslation();
+  const [count, handlers] = useCounter(0);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [opened, { open, close }] = useDisclosure(false);
   const [dense, { toggle }] = useDisclosure(false);
@@ -119,15 +121,21 @@ export default function Tasks() {
 
   return (
     <>
-      <Flex justify="space-between" align="end" gap="md">
+      <Flex justify="space-between" align="end" gap="md" key={count}>
         <ViewSwitcher dense={dense} onToggle={toggle} />
         <CSimpleFilter
           onSearch={() => {
             reload(filter.getValues());
           }}
           onClear={() => {
-            filter.reset();
+            filter.setValues({
+              title: "",
+              assigneeId: "",
+              status: "",
+            });
             reload();
+            handlers.increment();
+            logger.info("Filter cleared", filter.getValues());
           }}
         >
           <TextInput

@@ -1,7 +1,7 @@
 import useTranslation from "@/common/hooks/useTranslation";
 import {
   ActionIcon,
-  Affix,
+  Box,
   Button,
   Drawer,
   Flex,
@@ -23,26 +23,23 @@ export function CSimpleFilter({
   const [opened, { open, close }] = useDisclosure(false);
   const t = useTranslation();
   return (
-    <>
-      <Affix
+    <Box
+      m={0}
+      p={0}
+      bg="white"
+      style={{
+        zIndex: 100,
+        position: "relative",
+      }}
+    >
+      <ActionIcon
+        m={0}
+        variant="transparent"
+        onClick={open}
         hiddenFrom="md"
-        hidden={opened}
-        position={{
-          top: 10,
-          right: 10,
-        }}
       >
-        <ActionIcon
-          m="xs"
-          variant="transparent"
-          onClick={open}
-          style={{
-            margin: "0px",
-          }}
-        >
-          <IconFilter />
-        </ActionIcon>
-      </Affix>
+        <IconFilter size={"1rem"} />
+      </ActionIcon>
       <Drawer
         hiddenFrom={"md"}
         position="right"
@@ -76,7 +73,13 @@ export function CSimpleFilter({
             <Button w="100%" onClick={onSearch}>
               {t("Search")}
             </Button>
-            <Button w="100%" onClick={onClear} variant="outline">
+            <Button
+              w="100%"
+              onClick={() => {
+                onClear?.();
+              }}
+              variant="outline"
+            >
               {t("Clear")}
             </Button>
           </Flex>
@@ -95,6 +98,6 @@ export function CSimpleFilter({
           {t("Clear")}
         </Button>
       </Flex>
-    </>
+    </Box>
   );
 }

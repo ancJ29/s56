@@ -76,6 +76,7 @@ export function GanttChart({
               </Table.Th>
               <Table.Th
                 className={classes.headerHeight}
+                w="9rem"
                 hidden={dense}
               >
                 {t("Assignee")}

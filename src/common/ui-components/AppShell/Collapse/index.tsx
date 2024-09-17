@@ -1,3 +1,4 @@
+import useIsMobile from "@/common/hooks/useIsMobile";
 import useTranslation from "@/common/hooks/useTranslation";
 import useAppStore from "@/common/stores/app";
 import useAuthStore from "@/common/stores/auth";
@@ -21,6 +22,7 @@ export default function CollapseAppShell({
   title,
   children,
 }: WrapperComponentProps & { title?: string }) {
+  const isMobile = useIsMobile();
   const t = useTranslation();
   const { header } = useAppStore();
   const { payload } = useAuthStore();
@@ -73,10 +75,15 @@ export default function CollapseAppShell({
           >
             {header?.title || t(title)}
           </Text>
-          <Space style={{ flexGrow: 1 }} />
+          <Space style={{ flexGrow: 1 }} visibleFrom="md" />
           {payload?.id && (
-            <Flex justify="start" align="center" gap="xs">
-              <CAvatar size="md" name={payload?.userName} />
+            <Flex
+              justify="start"
+              align="center"
+              gap="xs"
+              visibleFrom="md"
+            >
+              <CAvatar size={"md"} name={payload?.userName} />
               <Text>{payload?.fullName || payload?.userName}</Text>
             </Flex>
           )}
