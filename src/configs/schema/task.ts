@@ -1,4 +1,4 @@
-import { APP_ACTIONS } from "@/configs/enums";
+import { APP_ACTION_GROUPS, APP_ACTIONS } from "@/configs/enums";
 import * as z from "zod";
 import {
   builder,
@@ -11,7 +11,8 @@ import {
 } from "./_base";
 
 export const registerTaskSchema = builder({
-  action: z.literal(APP_ACTIONS.TASK_REGISTER_TASK),
+  group: z.literal(APP_ACTION_GROUPS.TASK),
+  action: z.literal(APP_ACTIONS.REGISTER_TASK),
   params: z.object({
     title: stringSchema,
     description: stringSchema,
@@ -26,7 +27,8 @@ export const registerTaskSchema = builder({
 });
 
 export const addNoteSchema = builder({
-  action: z.literal(APP_ACTIONS.TASK_ADD_NOTE),
+  group: z.literal(APP_ACTION_GROUPS.TASK),
+  action: z.literal(APP_ACTIONS.ADD_NOTE),
   params: z.object({
     taskId: stringSchema,
     note: stringSchema,
@@ -37,7 +39,8 @@ export const addNoteSchema = builder({
 });
 
 export const removeNoteSchema = builder({
-  action: z.literal(APP_ACTIONS.TASK_REMOVE_NOTE),
+  group: z.literal(APP_ACTION_GROUPS.TASK),
+  action: z.literal(APP_ACTIONS.REMOVE_NOTE),
   params: z.object({
     taskId: stringSchema,
     noteId: stringSchema,
@@ -46,7 +49,8 @@ export const removeNoteSchema = builder({
 });
 
 export const updateTaskSchema = builder({
-  action: z.literal(APP_ACTIONS.TASK_UPDATE_TASK),
+  group: z.literal(APP_ACTION_GROUPS.TASK),
+  action: z.literal(APP_ACTIONS.UPDATE_TASK),
   params: z.object({
     taskId: stringSchema,
     title: optionalStringSchema,
@@ -82,7 +86,8 @@ const taskSchema = z.object({
 });
 
 export const getTasksSchema = builder({
-  action: z.literal(APP_ACTIONS.TASK_GET_TASKS),
+  group: z.literal(APP_ACTION_GROUPS.TASK),
+  action: z.literal(APP_ACTIONS.GET_TASKS),
   params: z.object({
     taskIds: stringSchema.array().optional(),
     assigneeId: optionalStringSchema,
@@ -94,7 +99,8 @@ export const getTasksSchema = builder({
 });
 
 export const getTaskSchema = builder({
-  action: z.literal(APP_ACTIONS.TASK_GET_TASK),
+  group: z.literal(APP_ACTION_GROUPS.TASK),
+  action: z.literal(APP_ACTIONS.GET_TASK),
   params: z.object({
     taskId: stringSchema,
   }),
@@ -102,7 +108,8 @@ export const getTaskSchema = builder({
 });
 
 export const deleteTaskSchema = builder({
-  action: z.literal(APP_ACTIONS.TASK_DELETE_TASK),
+  group: z.literal(APP_ACTION_GROUPS.TASK),
+  action: z.literal(APP_ACTIONS.DELETE_TASK),
   params: z.object({
     taskId: stringSchema,
   }),

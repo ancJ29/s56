@@ -1,4 +1,5 @@
 import useIsMobile from "@/common/hooks/useIsMobile";
+import useTranslation from "@/common/hooks/useTranslation";
 import { TableData, TableDataConfig } from "@/common/types";
 import { UnknownRecord } from "@/configs/types";
 import {
@@ -25,6 +26,7 @@ export function MobileDataList<T extends UnknownRecord>({
   onClick,
 }: MobileDataListProps<T>) {
   const isMobile = useIsMobile();
+  const t = useTranslation();
   if (!isMobile) {
     return <></>;
   }
@@ -40,10 +42,14 @@ export function MobileDataList<T extends UnknownRecord>({
                 onClick={() => onClick?.(el)}
               >
                 {tableData.configs.map((config, idx) => {
+                  let label = config.label || "";
+                  if (typeof label === "string") {
+                    label = t(label);
+                  }
                   return (
                     <Flex justify="space-between" key={idx}>
-                      <Text fw="500">{config.label}</Text>
-                      {_content(config, el)}
+                      <Text fw="500">{label}</Text>
+                      {_content(config, el, t)}
                     </Flex>
                   );
                 })}
@@ -59,16 +65,17 @@ export function MobileDataList<T extends UnknownRecord>({
 function _content<T extends UnknownRecord>(
   config: TableDataConfig<T>,
   el: T,
+  t?: (key: string) => string,
 ) {
   if (config.field) {
-    const value = _render(el, config.field);
+    const value = _render(el, config.field, t);
     return (
       <Text
         style={{
           ...config.styles?.mobile?.content,
         }}
       >
-        {value}
+        {t?.(value) || value}
       </Text>
     );
   }
@@ -78,10 +85,15 @@ function _content<T extends UnknownRecord>(
   return "";
 }
 
-function _render<T>(el: T, field: keyof T) {
+function _render<T>(
+  el: T,
+  field: keyof T,
+  t?: (key: string) => string,
+) {
   const value = field ? el[field] : undefined;
   if (["string", "number", "boolean"].includes(typeof value)) {
-    return (value as string).toString();
+    const v = (value as string).toString();
+    return t?.(v) || v;
   }
   return "";
 }

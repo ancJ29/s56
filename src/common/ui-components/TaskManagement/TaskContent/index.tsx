@@ -4,7 +4,7 @@ import useIsMobile from "@/common/hooks/useIsMobile";
 import useTranslation from "@/common/hooks/useTranslation";
 import {
   addNote,
-  register,
+  registerTask,
   removeNote,
   saveTask,
   Task,
@@ -131,10 +131,7 @@ export function TaskContent({
           </Tabs.Panel>
           <Tabs.Panel value="notes">
             <Notes form={form} setForm={setForm} />
-            <NoteInput
-              disabled={!Boolean(form.id)}
-              onSave={onNoteSaved}
-            />
+            <NoteInput disabled={!form.id} onSave={onNoteSaved} />
           </Tabs.Panel>
         </Tabs>
       </Container>
@@ -160,7 +157,7 @@ export function TaskContent({
       <Divider my={"1rem"} />
       <Notes form={form} setForm={setForm} />
       <Divider my={"1rem"} />
-      <NoteInput disabled={!Boolean(form.id)} onSave={onNoteSaved} />
+      <NoteInput disabled={!form.id} onSave={onNoteSaved} />
     </Container>
   );
 }
@@ -200,7 +197,7 @@ function SaveTaskButton({
                 );
               });
           } else {
-            register(form)
+            registerTask(form)
               .then(() => {
                 success("Task saved", "Your task is saved!");
                 onSave?.(form);

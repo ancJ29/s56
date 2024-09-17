@@ -1,3 +1,4 @@
+import useTranslation from "@/common/hooks/useTranslation";
 import { TableData } from "@/common/types";
 import { UnknownRecord } from "@/configs/types";
 import { Table, TableProps } from "@mantine/core";
@@ -14,6 +15,7 @@ export function SimpleTable<T extends UnknownRecord>({
   tableData,
   ...props
 }: SimpleTableProps<T>) {
+  const t = useTranslation();
   return (
     <Table
       striped={striped}
@@ -24,11 +26,17 @@ export function SimpleTable<T extends UnknownRecord>({
     >
       <Table.Thead>
         <Table.Tr style={tableData?.styles?.tableTr}>
-          {tableData.configs.map((config, idx) => (
-            <Table.Th style={config.styles?.tableTh} key={idx}>
-              {config.label}
-            </Table.Th>
-          ))}
+          {tableData.configs.map((config, idx) => {
+            let label = config.label || "";
+            if (typeof label === "string") {
+              label = t(label);
+            }
+            return (
+              <Table.Th style={config.styles?.tableTh} key={idx}>
+                {label}
+              </Table.Th>
+            );
+          })}
         </Table.Tr>
       </Table.Thead>
       <Table.Tbody>
@@ -38,7 +46,7 @@ export function SimpleTable<T extends UnknownRecord>({
               if (config.field) {
                 return (
                   <Table.Td key={idx}>
-                    {_render(el, config.field)}
+                    {_render(el, config.field, t)}
                   </Table.Td>
                 );
               }
@@ -56,10 +64,15 @@ export function SimpleTable<T extends UnknownRecord>({
   );
 }
 
-function _render<T>(el: T, field: keyof T) {
+function _render<T>(
+  el: T,
+  field: keyof T,
+  t?: (key: string) => string,
+) {
   const value = field ? el[field] : undefined;
   if (["string", "number", "boolean"].includes(typeof value)) {
-    return (value as string).toString();
+    const v = (value as string).toString();
+    return t?.(v) || v;
   }
   return "";
 }

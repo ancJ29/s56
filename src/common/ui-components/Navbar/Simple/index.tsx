@@ -1,6 +1,7 @@
 import useTranslation from "@/common/hooks/useTranslation";
 import useAuthStore from "@/common/stores/auth";
 import { TablerIcon } from "@/common/ui-components/TablerIcon";
+import { UnstyledButton } from "@mantine/core";
 import { IconLogout } from "@tabler/icons-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +18,6 @@ export function SimpleNavbar() {
     <a
       className={classes.link}
       data-active={item.label === active || undefined}
-      href={item.link}
       key={item.label}
       onClick={(event) => {
         event.preventDefault();
@@ -39,10 +39,19 @@ export function SimpleNavbar() {
       <div className={classes.navbarMain}>{links}</div>
 
       <div className={classes.footer}>
-        <a href="/logout" className={classes.link}>
+        <UnstyledButton
+          className={classes.link}
+          onClick={(e) => {
+            e.preventDefault();
+            useAuthStore.getState().logout({
+              reload: true,
+              to: "/login",
+            });
+          }}
+        >
           <IconLogout className={classes.linkIcon} stroke={1.5} />
           <span>{t("Logout")}</span>
-        </a>
+        </UnstyledButton>
       </div>
     </nav>
   );

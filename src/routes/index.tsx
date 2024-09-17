@@ -1,7 +1,14 @@
-import { LazyReactNode } from "@/common/types";
+import { LazyReactNode, WrapperComponentProps } from "@/common/types";
 import { lazy } from "react";
 
-export const wrapperMap: Record<string, LazyReactNode> = {
+export const wrapperMap: Record<
+  string,
+  LazyReactNode<
+    WrapperComponentProps & {
+      title?: string;
+    }
+  >
+> = {
   Blank: lazy(() => import("@/common/ui-components/Wrappers/Blank")),
   Auth: lazy(() => import("@/common/ui-components/Wrappers/Auth")),
   CollapseAppShell: lazy(
@@ -12,20 +19,24 @@ export const wrapperMap: Record<string, LazyReactNode> = {
 const routes = [
   {
     path: "/login",
+    title: "Login",
     element: lazy(() => import("@/pages/login")),
   },
   {
     path: "/clients",
     wrappers: ["Auth", "CollapseAppShell"],
+    title: "Client Management",
     element: lazy(() => import("@/pages/clients")),
   },
   {
     path: "/task-management",
+    title: "Task Management",
     wrappers: ["Auth", "CollapseAppShell"],
     element: lazy(() => import("@/pages/tasks")),
   },
   {
     path: "/user-management",
+    title: "User Management",
     wrappers: ["Auth", "CollapseAppShell"],
     element: lazy(() => import("@/pages/users")),
   },
@@ -35,6 +46,7 @@ const routes = [
   },
   {
     path: "/dashboard",
+    title: "Dashboard",
     wrappers: ["Auth", "CollapseAppShell"],
     element: lazy(() => import("@/pages/tasks")),
   },
@@ -43,7 +55,7 @@ const routes = [
     wrapper: "Blank",
     element: lazy(() => import("@/pages/login")),
   },
-].map(({ path, wrapper, wrappers, element: Component }) => {
+].map(({ title, path, wrapper, wrappers, element: Component }) => {
   return {
     path,
     element: (wrappers?.length ? wrappers : [wrapper || "Blank"])
@@ -52,7 +64,7 @@ const routes = [
       })
       .reduce(
         (children, Wrapper) => {
-          return <Wrapper>{children}</Wrapper>;
+          return <Wrapper title={title}>{children}</Wrapper>;
         },
         <Component />,
       ),

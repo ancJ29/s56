@@ -3,12 +3,10 @@ import logger from "../helpers/logger";
 
 type AppState = {
   loading: boolean;
-  title: string;
   display: {
     header: boolean;
-  },
+  };
   triggerLoading: () => void;
-  setTitle: (title: string) => void;
   hideHeader: () => void;
   showHeader: () => void;
   stopLoading: () => void;
@@ -21,9 +19,6 @@ const appStore = create<AppState>((set) => ({
   title: "",
   display: {
     header: true,
-  },
-  setTitle: (title: string) => {
-    set({ title });
   },
   hideHeader: () => {
     set({ display: { header: false } });

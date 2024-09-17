@@ -1,11 +1,6 @@
 import { IS_DEV, LOG_LEVEL } from "./env";
 
-type Level = "OFF" |
-  "ERROR" |
-  "WARN" |
-  "INFO" |
-  "DEBUG" |
-  "TRACE";
+type Level = "OFF" | "ERROR" | "WARN" | "INFO" | "DEBUG" | "TRACE";
 
 const map = {
   OFF: 0,
@@ -34,7 +29,7 @@ function _log(level: Level, ...args: unknown[]) {
     return;
   }
   if (IS_DEV) {
-    const lvl = (map[level] || 0)
+    const lvl = map[level] || 0;
     if (lvl < threshold) {
       console.log(level, ...args); // eslint-disable-line no-console
     }

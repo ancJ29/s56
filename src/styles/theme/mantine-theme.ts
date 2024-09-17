@@ -22,7 +22,7 @@ export const theme = createTheme({
       "#4f6ab9",
       "#405aa3",
       "#385092",
-      "#2c4582"
+      "#2c4582",
     ],
-  }
+  },
 });

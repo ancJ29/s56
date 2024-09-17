@@ -1,4 +1,4 @@
-import { APP_ACTIONS, APP_ICONS } from "@/configs/enums";
+import { APP_ACTION_GROUPS, APP_ACTIONS, APP_ICONS } from "@/configs/enums";
 import * as z from "zod";
 import {
   builder,
@@ -8,6 +8,7 @@ import {
 } from "./_base";
 
 export const addClientSchema = builder({
+  group: z.literal(APP_ACTION_GROUPS.ADMIN),
   action: z.literal(APP_ACTIONS.ADMIN_ADD_CLIENT),
   params: z.object({
     name: stringSchema,

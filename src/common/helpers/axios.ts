@@ -11,9 +11,9 @@ import logger from "./logger";
 
 let axios: AxiosInstance;
 
-export async function callApi<A, P, R>(
-  { action, payload }: RequestPayload,
-  schema: ServiceSchema<A, P, R>,
+export async function callApi<G, A, P, R>(
+  { group, action, payload }: RequestPayload,
+  schema: ServiceSchema<G, A, P, R>,
   opt?: {
     failed: R | null | undefined;
     cached?: boolean;
@@ -45,7 +45,7 @@ export async function callApi<A, P, R>(
 
   async function _run() {
     const res = await _apiRequest(
-      schema.payload.parse({ action, payload }),
+      schema.payload.parse({ group, action, payload }),
     );
     const data = schema.result.safeParse(res);
     if (data.success) {
@@ -100,7 +100,6 @@ function _buildBrowserAxiosInstance() {
     baseURL: import.meta.env.APP_API_URL,
     headers: {
       "Content-type": "application/json",
-      "X-CLIENT-ID": import.meta.env.APP_CLIENT_ID,
       "X-LANG": localStorage.__LANGUAGE__,
     },
   });

@@ -1,4 +1,4 @@
-import { APP_ACTIONS } from "@/configs/enums";
+import { APP_ACTION_GROUPS, APP_ACTIONS } from "@/configs/enums";
 import * as z from "zod";
 import { builder, numberSchema, stringSchema, successSchema } from "./_base";
 
@@ -8,7 +8,8 @@ export const languageSchema = z.object({
 });
 
 export const updateTranslationSchema = builder({
-  action: z.literal(APP_ACTIONS.CLIENT_GET_META_DATA),
+  group: z.literal(APP_ACTION_GROUPS.CLIENT),
+  action: z.literal(APP_ACTIONS.GET_CLIENT_META_DATA),
   params: z.object({
     clientId: numberSchema,
     data: z.object({
@@ -20,7 +21,8 @@ export const updateTranslationSchema = builder({
 });
 
 export const getClientMetaDataSchema = builder({
-  action: z.literal(APP_ACTIONS.CLIENT_GET_META_DATA),
+  group: z.literal(APP_ACTION_GROUPS.CLIENT),
+  action: z.literal(APP_ACTIONS.GET_CLIENT_META_DATA),
   params: z.object({
     clientId: numberSchema,
   }),
@@ -30,6 +32,8 @@ export const getClientMetaDataSchema = builder({
     code: stringSchema,
     enabled: z.boolean(),
     lang: languageSchema,
+    // Record<code, departmentName>
+    departments: z.record(stringSchema, stringSchema).optional(),
     users: z
       .record(
         stringSchema,

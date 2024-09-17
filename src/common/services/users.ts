@@ -1,25 +1,61 @@
 import { callApi } from "@/common/helpers/axios";
-import { APP_ACTIONS } from "@/configs/enums/actions";
 import {
+  APP_ACTION_GROUPS,
+  APP_ACTIONS,
+} from "@/configs/enums/actions";
+import {
+  addUserByAdminSchema,
   getAllUserSchema,
 } from "@/configs/schema/user";
+import { hashMd5 } from "@/utils";
 import * as z from "zod";
+import { _clientId, _getClient } from "./_helpers";
 
-export type User = z.infer<typeof getAllUserSchema.result>[0];
+export type User = z.infer<typeof getAllUserSchema.result>[0] & {
+  department?: string;
+};
 
-export async function getUsers(): Promise<User[]> {
-  const APP_CLIENT_ID = Number(import.meta.env.APP_CLIENT_ID || 0);
-  if (!APP_CLIENT_ID || isNaN(APP_CLIENT_ID)) {
-    throw new Error("APP_CLIENT_ID is not defined");
-  }
+const group = APP_ACTION_GROUPS.USER;
 
-  const action = APP_ACTIONS.USER_GET_ALL_USERS;
-
-  const users = await callApi(
+export async function addUserByAdmin({
+  userName,
+  password,
+  fullName,
+  departmentCode,
+}: {
+  userName: string;
+  password: string;
+  fullName?: string;
+  departmentCode?: string;
+}) {
+  const action = APP_ACTIONS.ADD_USER_BY_ADMIN;
+  const res = await callApi(
     {
+      group,
       action,
       payload: {
-        clientId: APP_CLIENT_ID,
+        userName,
+        password: hashMd5(password),
+        clientId: _clientId(),
+        departmentCode,
+        fullName,
+      },
+    },
+    addUserByAdminSchema,
+  );
+  return res?.success || false;
+}
+
+export async function getUsers(): Promise<User[]> {
+  const action = APP_ACTIONS.GET_ALL_USERS;
+  const client = await _getClient();
+  const departments = client?.departments || {};
+  const users = await callApi(
+    {
+      group,
+      action,
+      payload: {
+        clientId: _clientId(),
       },
     },
     getAllUserSchema,
@@ -27,5 +63,12 @@ export async function getUsers(): Promise<User[]> {
       failed: null,
     },
   );
-  return users || [];
+  return (users || []).map((user) => {
+    return {
+      ...user,
+      department: user.departmentCode
+        ? departments[user.departmentCode]
+        : "",
+    };
+  });
 }

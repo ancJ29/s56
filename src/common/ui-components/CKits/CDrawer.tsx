@@ -4,19 +4,28 @@ import { Drawer, DrawerProps } from "@mantine/core";
 
 type CDrawerProps = {
   opened: boolean;
-  onClose: DrawerProps["onClose"];
+  visibleFrom?: DrawerProps["visibleFrom"];
+  onClose?: DrawerProps["onClose"];
 } & WrapperComponentProps;
 
-export function CDrawer({ children, opened, onClose }: CDrawerProps) {
+export function CDrawer({
+  visibleFrom = "md",
+  children,
+  opened,
+  onClose,
+}: CDrawerProps) {
   const isMobile = useIsMobile();
 
   return (
     <Drawer
+      visibleFrom={visibleFrom}
       position="right"
       radius="sm"
       size={isMobile ? "99vw" : "50vw"}
       opened={opened}
-      onClose={onClose}
+      onClose={() => {
+        onClose?.();
+      }}
       transitionProps={{
         transition: "slide-left",
         duration: 200,

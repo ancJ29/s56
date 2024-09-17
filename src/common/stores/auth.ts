@@ -3,14 +3,21 @@ import { C_SERVICE_SCHEMA } from "@/configs/schema";
 import { AuthenticationPayload } from "@/configs/types";
 import { jwtDecode } from "jwt-decode";
 import { create } from "zustand";
+
 type AuthState = {
   token?: string;
   payload?: AuthenticationPayload;
   setToken: (token?: string, remember?: boolean) => void;
-  logout: (_?: { to?: string }) => void;
+  logout: (_?: { reload?: boolean; to?: string }) => void;
 };
 
-const authStore = create<AuthState>((set) => ({
+const _defaultState = {
+  token: undefined,
+  payload: undefined,
+  isAdmin: false,
+};
+
+const authStore = create<AuthState>((set, get) => ({
   ..._loadPayload(),
   setToken: (token?: string, remember = false) => {
     logger.trace("setToken", token, remember);
@@ -32,22 +39,32 @@ const authStore = create<AuthState>((set) => ({
       } catch (error) {
         logger.error("setToken error", error);
       }
-      set({ token: undefined, payload: undefined });
-      delete localStorage.__TOKEN__;
-      delete sessionStorage.__TOKEN__;
+      get().logout({ reload: false });
     }
   },
-  logout: ({ to }: { to?: string } = {}) => {
-    set({ token: undefined, payload: undefined });
+  logout: (
+    {
+      to,
+      reload,
+    }: {
+      reload?: boolean;
+      to?: string;
+    } = {
+      reload: true,
+    },
+  ) => {
+    set({ ..._defaultState });
     delete localStorage.__TOKEN__;
     delete sessionStorage.__TOKEN__;
-    setTimeout(() => {
-      if (to) {
-        window.location.replace(to);
-      } else {
-        window.location.reload();
-      }
-    }, 10);
+    if (reload !== false) {
+      setTimeout(() => {
+        if (to) {
+          window.location.replace(to);
+        } else {
+          window.location.reload();
+        }
+      }, 10);
+    }
   },
 }));
 

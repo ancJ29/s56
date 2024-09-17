@@ -1,6 +1,9 @@
 import { callApi } from "@/common/helpers/axios";
 import clientStore from "@/common/stores/client";
-import { APP_ACTIONS } from "@/configs/enums/actions";
+import {
+  APP_ACTION_GROUPS,
+  APP_ACTIONS,
+} from "@/configs/enums/actions";
 import {
   addNoteSchema,
   getTasksSchema,
@@ -12,8 +15,11 @@ import { ClientMetaData } from "@/configs/types";
 import * as z from "zod";
 import { cache } from "../helpers/cache";
 import logger from "../helpers/logger";
-import { getMetaData } from "./client";
+import { _getClient } from "./_helpers";
+
 type TaskFromServer = z.infer<typeof getTasksSchema.result>[0];
+
+const group = APP_ACTION_GROUPS.TASK;
 
 export type Task = Omit<TaskFromServer, "status"> & {
   status: string;
@@ -22,9 +28,10 @@ export type Task = Omit<TaskFromServer, "status"> & {
 export type Note = Task["notes"][0];
 
 export async function getTasks(): Promise<Task[]> {
-  const action = APP_ACTIONS.TASK_GET_TASKS;
+  const action = APP_ACTIONS.GET_TASKS;
   const res = await callApi(
     {
+      group,
       action,
       payload: {},
     },
@@ -39,11 +46,12 @@ export async function getTasks(): Promise<Task[]> {
   return tasks || [];
 }
 
-export async function register(task: Task) {
-  const action = APP_ACTIONS.TASK_REGISTER_TASK;
+export async function registerTask(task: Task) {
+  const action = APP_ACTIONS.REGISTER_TASK;
   const client = await _getClient();
   const res = await callApi(
     {
+      group,
       action,
       payload: {
         title: task.title,
@@ -60,10 +68,11 @@ export async function register(task: Task) {
 }
 
 export async function saveTask(task: Task) {
-  const action = APP_ACTIONS.TASK_UPDATE_TASK;
+  const action = APP_ACTIONS.UPDATE_TASK;
   const client = await _getClient();
   await callApi(
     {
+      group,
       action,
       payload: {
         taskId: task.id,
@@ -80,9 +89,10 @@ export async function saveTask(task: Task) {
 }
 
 export async function addNote(note: string, taskId: string) {
-  const action = APP_ACTIONS.TASK_ADD_NOTE;
+  const action = APP_ACTIONS.ADD_NOTE;
   const res = await callApi(
     {
+      group,
       action,
       payload: {
         note,
@@ -98,9 +108,10 @@ export async function addNote(note: string, taskId: string) {
 }
 
 export async function removeNote(noteId: string, taskId: string) {
-  const action = APP_ACTIONS.TASK_REMOVE_NOTE;
+  const action = APP_ACTIONS.REMOVE_NOTE;
   await callApi(
     {
+      group,
       action,
       payload: {
         noteId,
@@ -136,14 +147,6 @@ export function statusColors() {
   );
   cache.set("statusColors", colors, { ttl: 1000 * 60 * 60 });
   return colors;
-}
-
-async function _getClient() {
-  let client = clientStore.getState().client;
-  if (!client) {
-    client = (await getMetaData()) || undefined;
-  }
-  return client;
 }
 
 function _statusIdToString(

@@ -1,4 +1,5 @@
 .navbar {
+  cursor: pointer;
   height: 100%;
   width: rem(300px);
   padding: var(--mantine-spacing-none);

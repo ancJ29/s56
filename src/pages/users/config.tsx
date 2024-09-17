@@ -2,20 +2,16 @@ export const configs = [
   {
     key: "userName",
     field: "userName",
-    label: "User Name",
+    label: "User name",
+  },
+  {
+    key: "fullName",
+    label: "Full name",
+    field: "fullName",
   },
   {
     key: "department",
     label: "Department",
-    render: () => {
-      return <></>;
-    },
-  },
-  {
-    key: "action",
-    label: "Action",
-    render: () => {
-      return <></>;
-    },
+    field: "department",
   },
 ];

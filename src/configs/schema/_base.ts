@@ -23,20 +23,23 @@ export const passwordSchema = stringSchema;
 //   return v;
 // });
 
-export function builder<A, P, R>(
-  schema: Omit<ServiceSchema<A, P, R>, "payload"> & {
+export function builder<G, A, P, R>(
+  schema: Omit<ServiceSchema<G, A, P, R>, "payload"> & {
     payload?: z.ZodObject<{
+      group: z.ZodLiteral<G>;
       action: z.ZodLiteral<A>;
       payload: z.ZodType<P>;
     }>;
   },
 ) {
   schema.payload = z.object({
+    group: schema.group,
     action: schema.action,
     payload: schema.params,
   }) satisfies z.ZodObject<{
+    group: z.ZodLiteral<G>;
     action: z.ZodLiteral<A>;
     payload: z.ZodType<P>;
   }>;
-  return schema as ServiceSchema<A, P, R>;
+  return schema as ServiceSchema<G, A, P, R>;
 }
