@@ -3,7 +3,7 @@ import useAuthStore from "@/common/stores/auth";
 import { TablerIcon } from "@/common/ui-components/TablerIcon";
 import { UnstyledButton } from "@mantine/core";
 import { IconLogout } from "@tabler/icons-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import classes from "./style.module.css";
 
@@ -14,6 +14,13 @@ export function SimpleNavbar() {
   const menu = payload?.client?.menu || [];
   const navigate = useNavigate();
   const [active, setActive] = useState(menu[0]?.label);
+
+  useEffect(() => {
+    const { label } =
+      menu.find((item) => item.link === window.location.pathname) ||
+      {};
+    setActive(label || menu[0]?.label);
+  }, []);
   const links = (payload?.client?.menu || []).map((item) => (
     <a
       className={classes.link}

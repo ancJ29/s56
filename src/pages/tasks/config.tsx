@@ -1,13 +1,31 @@
 import { Task } from "@/common/services/task";
 import { StatusBadge } from "@/common/ui-components/TaskManagement/StatusBadge";
 import { UserLabel } from "@/common/ui-components/UserManagement/UserLabel";
+import { Text } from "@mantine/core";
 import dayjs from "dayjs";
 
 export const configs = [
   {
-    key: "title",
-    field: "title",
+    key: "Task Title",
     label: "Task",
+    render: (task: Task) => {
+      return (
+        <>
+          <Text
+            maw="50vw"
+            hiddenFrom="md"
+            style={{
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {task.title}
+          </Text>
+          <Text visibleFrom="md">{task.title}</Text>
+        </>
+      );
+    },
     styles: {
       mobile: {
         content: {

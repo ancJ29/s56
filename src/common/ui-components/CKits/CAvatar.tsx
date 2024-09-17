@@ -1,4 +1,4 @@
-import { Avatar, AvatarProps } from "@mantine/core";
+import { Avatar, AvatarProps, Text } from "@mantine/core";
 
 export type CAvatarProps = {
   name?: string;
@@ -6,10 +6,12 @@ export type CAvatarProps = {
 };
 
 export function CAvatar({ size, name }: CAvatarProps) {
+  if (!name) {
+    return <></>;
+  }
   return (
-    <Avatar
-      size={size}
-      src={`https://eu.ui-avatars.com/api/?name=${name || "U"}`}
-    />
+    <Avatar size={size} bg="primary" color="white">
+      <Text>{name?.slice(0, 1)?.toLocaleUpperCase() || "A"}</Text>
+    </Avatar>
   );
 }

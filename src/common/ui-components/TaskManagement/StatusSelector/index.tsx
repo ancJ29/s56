@@ -23,5 +23,6 @@ export function StatusSelector({
         return { value: displayName, label: t(displayName) };
       });
   }, [client]);
+
   return <Select value={value} data={data} {...props} />;
 }

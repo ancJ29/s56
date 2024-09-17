@@ -1,4 +1,5 @@
 import logger from "@/common/helpers/logger";
+import useTranslation from "@/common/hooks/useTranslation";
 import { login } from "@/common/services/auth";
 import useAuthStore from "@/common/stores/auth";
 import { SimpleForm } from "@/common/ui-components/SimpleForm";
@@ -13,87 +14,71 @@ import {
   useMatches,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useCallback } from "react";
 import { Navigate } from "react-router-dom";
 
-const initialValues = {
-  userName: "",
-  password: "",
-};
-
-const validate = {
-  password: (val: string) =>
-    val.length <= 6
-      ? "Password should include at least 6 characters"
-      : null,
-};
-
 export default function Login() {
-  const form = useForm({ initialValues, validate });
+  const t = useTranslation();
   const { payload, setToken } = useAuthStore();
+  const form = useForm({
+    initialValues: {
+      userName: "",
+      password: "",
+    },
+  });
+
   const width = useMatches({
     base: "70dvw",
     sm: "70dvw",
     lg: "30dvw",
   });
+
+  const _login = useCallback(
+    (values: { userName: string; password: string }) => {
+      login(values).then((token) => {
+        if (token) {
+          logger.info("login success", token);
+          setToken(token, true);
+        } else {
+          logger.error("login failed");
+        }
+      });
+    },
+    [],
+  );
+
   if (payload?.id) {
-    logger.info("User already logged in", payload);
     return <Navigate to="/dashboard" />;
   }
-  logger.trace("Login page rendered");
+
   return (
     <Flex w="100dvw" h="100dvh" align="center" justify="center">
       <Center>
         <Paper radius="md" p="xl" withBorder w={width}>
           <Text size="lg" fw={500}>
-            Login to your account
+            {t("Login to your account")}
           </Text>
           <SimpleForm
             form={form}
             submit={{
-              label: "Login",
-              handler: (values) => {
-                logger.trace("login...", values);
-                login(values).then((token) => {
-                  if (token) {
-                    logger.info("login success", token);
-                    setToken(token, true);
-                  } else {
-                    logger.error("login failed");
-                  }
-                });
-              },
+              label: t("Login"),
+              handler: _login,
             }}
           >
             <Stack>
               <TextInput
                 required
-                label="Username"
-                placeholder="Your Username"
-                value={form.values.userName}
-                onChange={(event) =>
-                  form.setFieldValue(
-                    "userName",
-                    event.currentTarget.value,
-                  )
-                }
+                label={t("User name")}
+                placeholder={t("User name")}
                 radius="md"
+                {...form.getInputProps("userName")}
               />
               <PasswordInput
                 required
-                label="Password"
-                placeholder="Your password"
-                value={form.values.password}
-                onChange={(event) =>
-                  form.setFieldValue(
-                    "password",
-                    event.currentTarget.value,
-                  )
-                }
-                error={
-                  form.errors.password &&
-                  "Password should include at least 6 characters"
-                }
+                label={t("Password")}
+                placeholder={t("Your password")}
                 radius="md"
+                {...form.getInputProps("password")}
               />
             </Stack>
           </SimpleForm>

@@ -27,11 +27,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
-import {
-  IconArrowLeft,
-  IconInfoCircle,
-  IconMessage,
-} from "@tabler/icons-react";
+import { IconInfoCircle, IconMessage } from "@tabler/icons-react";
 import deepEqual from "lodash.isequal";
 import { useCallback, useState } from "react";
 import { UserSelector } from "../../UserManagement/UserSelector";
@@ -50,7 +46,7 @@ export function TaskContent({
   const isMobile = useIsMobile();
   const { payload } = useAuthStore();
   const [form, setForm] = useState({ ...task });
-  const isNew = !!form.id;
+  const isNew = !form.id;
 
   const onNoteSaved = useCallback((note: string) => {
     const notes = form.notes || [];
@@ -82,38 +78,35 @@ export function TaskContent({
   if (isMobile) {
     return (
       <Container
+        p={0}
         display="flex"
         style={{
           flexDirection: "column",
         }}
       >
-        <Flex align="center" justify="start" gap="sm" mb="xs">
-          <IconArrowLeft onClick={onClose} />
-          {isNew ? (
-            <Text fw="bold">{form.title}</Text>
-          ) : (
-            <TextInput
-              w="100%"
-              placeholder={t("Title")}
-              value={form.title}
-              onChange={(e) => {
-                setForm({ ...form, title: e.currentTarget.value });
-              }}
-            />
-          )}
-        </Flex>
+        {isNew && (
+          <TextInput
+            w="100%"
+            label={t("Task Title")}
+            placeholder={t("Task Title")}
+            value={form.title}
+            onChange={(e) => {
+              setForm({ ...form, title: e.currentTarget.value });
+            }}
+          />
+        )}
         <TitleAndDescription form={form} setForm={setForm} />
         <Tabs defaultValue="information">
           <Tabs.List>
             <Tabs.Tab
-              disabled={!isNew}
+              disabled={isNew}
               value="information"
               leftSection={<IconInfoCircle />}
             >
               {t("Information")}
             </Tabs.Tab>
             <Tabs.Tab
-              disabled={!isNew}
+              disabled={isNew}
               value="notes"
               leftSection={<IconMessage />}
             >
@@ -303,9 +296,9 @@ function TitleAndDescription({
   return (
     <>
       <Box visibleFrom="md">
-        <Text fw="600">{t("Title")}</Text>
         <TextInput
           fw="600"
+          label={t("Task Title")}
           value={form.title}
           onChange={(e) => {
             setForm({
@@ -315,8 +308,8 @@ function TitleAndDescription({
           }}
         />
       </Box>
-      <Text fw="600">{t("Description")}</Text>
       <Textarea
+        label={t("Description")}
         value={form.description}
         rows={3}
         onChange={(e) => {
@@ -340,71 +333,53 @@ function Attributes({
   const t = useTranslation();
   return (
     <>
-      <SimpleGrid
-        cols={{
-          base: 1,
-          md: 2,
-        }}
-      >
-        <SimpleGrid cols={2}>
-          <Text my="xs" fw="600">
-            {t("Assignee")}
-          </Text>
-          <Text my="xs" fw="600">
-            {t("Status")}
-          </Text>
-          <UserSelector
-            value={form.assigneeId}
-            onChange={(assigneeId) => {
-              if (assigneeId && assigneeId !== form.assigneeId) {
-                setForm({ ...form, assigneeId });
-              }
-            }}
-          />
-          <StatusSelector
-            value={form.status}
-            onChange={(status) => {
-              if (status && status !== form.status) {
-                setForm({ ...form, status });
-              }
-            }}
-          />
-        </SimpleGrid>
-        <SimpleGrid cols={2}>
-          <Text my="xs" fw="600">
-            {t("Start date")}
-          </Text>
-          <Text my="xs" fw="600">
-            {t("End date")}
-          </Text>
-
-          <DateInput
-            value={
-              form.startDate ? new Date(form.startDate) : undefined
+      <SimpleGrid cols={{ base: 2, md: 4 }} mt="sm" p={0}>
+        <UserSelector
+          label={t("Assignee")}
+          value={form.assigneeId}
+          onChange={(assigneeId) => {
+            if (assigneeId && assigneeId !== form.assigneeId) {
+              setForm({ ...form, assigneeId });
             }
-            onChange={(date) => {
-              logger.debug(
-                "date",
-                date,
-                date?.getTime(),
-                date ? new Date(date?.getTime()).toISOString() : "-",
-              );
-              setForm({
-                ...form,
-                startDate: date?.getTime() || 0,
-              });
-            }}
-          />
-          <DateInput
-            value={form.endDate ? new Date(form.endDate) : undefined}
-            onChange={(date) => {
-              setForm({
-                ...form,
-                endDate: date?.getTime() || 0,
-              });
-            }}
-          />
-        </SimpleGrid>
+          }}
+        />
+        <StatusSelector
+          label={t("Status")}
+          value={form.status}
+          onChange={(status) => {
+            if (status && status !== form.status) {
+              setForm({ ...form, status });
+            }
+          }}
+        />
+        <DateInput
+          label={t("Start date")}
+          value={
+            form.startDate ? new Date(form.startDate) : undefined
+          }
+          onChange={(date) => {
+            logger.debug(
+              "date",
+              date,
+              date?.getTime(),
+              date ? new Date(date?.getTime()).toISOString() : "-",
+            );
+            setForm({
+              ...form,
+              startDate: date?.getTime() || 0,
+            });
+          }}
+        />
+        <DateInput
+          label={t("End date")}
+          value={form.endDate ? new Date(form.endDate) : undefined}
+          onChange={(date) => {
+            setForm({
+              ...form,
+              endDate: date?.getTime() || 0,
+            });
+          }}
+        />
       </SimpleGrid>
     </>
   );

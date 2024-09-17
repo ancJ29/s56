@@ -27,13 +27,21 @@ export type Task = Omit<TaskFromServer, "status"> & {
 
 export type Note = Task["notes"][0];
 
-export async function getTasks(): Promise<Task[]> {
+export async function getTasks(filter?: {
+  status?: string;
+  assigneeId?: string;
+}): Promise<Task[]> {
   const action = APP_ACTIONS.GET_TASKS;
   const res = await callApi(
     {
       group,
       action,
-      payload: {},
+      payload: {
+        assigneeId: filter?.assigneeId || undefined,
+        status: filter?.status
+          ? _statusToId(filter.status)
+          : undefined,
+      },
     },
     getTasksSchema,
   );

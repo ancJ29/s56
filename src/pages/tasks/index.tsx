@@ -5,19 +5,24 @@ import {
   getTasks,
   type Task,
 } from "@/common/services/task";
-import appStore from "@/common/stores/app";
 import { CAddIcon } from "@/common/ui-components/CKits/CAddIcon";
 import { CDrawer } from "@/common/ui-components/CKits/CDrawer";
+import { CMobileFull } from "@/common/ui-components/CKits/CMobileFull";
+import { CSimpleFilter } from "@/common/ui-components/CKits/CSimpleFilter";
 import { MobileDataList } from "@/common/ui-components/Table/MobileDataList";
 import { GanttChart } from "@/common/ui-components/TaskManagement/GanttChart";
+import { StatusSelector } from "@/common/ui-components/TaskManagement/StatusSelector";
 import { TaskContent } from "@/common/ui-components/TaskManagement/TaskContent";
-import { Flex, Switch } from "@mantine/core";
+import { UserSelector } from "@/common/ui-components/UserManagement/UserSelector";
+import { Flex, Switch, TextInput } from "@mantine/core";
+import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { useCallback, useEffect, useState } from "react";
 import { configs } from "./config";
 
 export default function Tasks() {
   const isMobile = useIsMobile();
+  const t = useTranslation();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [opened, { open, close }] = useDisclosure(false);
   const [dense, { toggle }] = useDisclosure(false);
@@ -25,11 +30,32 @@ export default function Tasks() {
     undefined,
   );
 
+  const filter = useForm<{
+    title?: string;
+    assigneeId?: string;
+    status?: string;
+  }>({
+    initialValues: {
+      title: "",
+      assigneeId: "",
+      status: "",
+    },
+  });
+
   useEffect(() => {
     getTasks().then((tasks) => {
       setTasks(tasks);
     });
   }, []);
+
+  const reload = useCallback(
+    (filter?: { status?: string; assigneeId?: string }) => {
+      getTasks(filter).then((tasks) => {
+        setTasks(tasks);
+      });
+    },
+    [filter],
+  );
 
   const selectTask = useCallback(
     (taskId?: string) => {
@@ -43,21 +69,13 @@ export default function Tasks() {
         return;
       }
       setSelectedTask(task);
-      if (isMobile) {
-        appStore.getState().hideHeader();
-      } else {
-        open();
-      }
+      open();
     },
     [open, tasks, isMobile],
   );
 
   const onClose = useCallback(() => {
-    if (isMobile) {
-      appStore.getState().showHeader();
-    } else {
-      close();
-    }
+    close();
     setSelectedTask(undefined);
   }, [isMobile, close]);
 
@@ -84,17 +102,48 @@ export default function Tasks() {
 
   if (isMobile && selectedTask) {
     return (
-      <TaskContent
-        task={selectedTask}
-        onSave={onTaskSaved}
+      <CMobileFull
         onClose={onClose}
-      />
+        title={
+          selectedTask.id ? selectedTask.title : t("Add new task")
+        }
+      >
+        <TaskContent
+          task={selectedTask}
+          onSave={onTaskSaved}
+          onClose={onClose}
+        />
+      </CMobileFull>
     );
   }
+
   return (
     <>
-      <ViewSwitcher dense={dense} onToggle={toggle} />
-      <CAddIcon onClick={() => selectTask()} />
+      <Flex justify="space-between" align="end" gap="md">
+        <ViewSwitcher dense={dense} onToggle={toggle} />
+        <CSimpleFilter
+          onSearch={() => {
+            reload(filter.getValues());
+          }}
+          onClear={() => {
+            filter.reset();
+            reload();
+          }}
+        >
+          <TextInput
+            placeholder={t("Task title")}
+            {...filter.getInputProps("title")}
+          />
+          <UserSelector
+            placeholder={t("Assignee")}
+            {...filter.getInputProps("assigneeId")}
+          />
+          <StatusSelector
+            placeholder={t("Status")}
+            {...filter.getInputProps("statusId")}
+          />
+        </CSimpleFilter>
+      </Flex>
       <MobileDataList
         scrollAreaHeight="100%"
         onClick={(task) => selectTask(task.id)}
@@ -120,6 +169,7 @@ export default function Tasks() {
           />
         )}
       </CDrawer>
+      <CAddIcon hidden={opened} onClick={() => selectTask()} />{" "}
     </>
   );
 }
@@ -134,17 +184,15 @@ function ViewSwitcher({
   const t = useTranslation();
   return (
     <>
-      <Flex justify="end">
-        <Switch
-          visibleFrom="md"
-          checked={dense}
-          my="1rem"
-          label={
-            <b>{`${t("DENSE MODE")}: ${dense ? t("ON") : t("OFF")}`}</b>
-          }
-          onClick={onToggle}
-        />
-      </Flex>
+      <Switch
+        visibleFrom="md"
+        checked={dense}
+        my="1rem"
+        label={
+          <b>{`${t("DENSE MODE")}: ${dense ? t("ON") : t("OFF")}`}</b>
+        }
+        onClick={onToggle}
+      />
     </>
   );
 }
