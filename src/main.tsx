@@ -1,4 +1,3 @@
-import { LanguageProvider } from "@/common/contexts/LanguageContext";
 import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
 import "@mantine/notifications/styles.css";
@@ -13,9 +12,7 @@ if (root) {
   createRoot(root).render(
     <React.Suspense>
       <BrowserRouter>
-        <LanguageProvider>
-          <App />
-        </LanguageProvider>
+        <App />
       </BrowserRouter>
     </React.Suspense>,
   );

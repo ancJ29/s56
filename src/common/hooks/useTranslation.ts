@@ -1,12 +1,31 @@
-import { LanguageContext } from "@/common/contexts/LanguageContext";
 import { IS_DEV } from "@/common/helpers/env";
-import { useCallback, useContext } from "react";
+import useClientStore from "@/common/stores/client";
+import { Language } from "@/configs/enums";
+import en from "@/configs/languages/en.json";
+import vi from "@/configs/languages/vi.json";
+import { useCallback, useMemo } from "react";
+
+const languages = {
+  [Language.EN]: en,
+  [Language.VI]: vi,
+};
 
 export default function useTranslation(): (
   key?: string,
   ...args: (string | number)[]
 ) => string {
-  const { dictionary } = useContext(LanguageContext);
+  const { lang: clientLanguages } = useClientStore();
+
+  const dictionary = useMemo(() => {
+    const current = (localStorage.__LANGUAGE__ ||
+      Language.EN) as Language;
+
+    return {
+      ...(languages[current] || {}),
+      ...(clientLanguages?.[current] || {}),
+    };
+  }, [clientLanguages]);
+
   const t = useCallback(
     (key?: string, ...args: (string | number)[]) => {
       return key ? _t(dictionary, key, ...args) : "";

@@ -32,14 +32,6 @@ export function CSimpleFilter({
         position: "relative",
       }}
     >
-      <ActionIcon
-        m={0}
-        variant="transparent"
-        onClick={open}
-        hiddenFrom="md"
-      >
-        <IconFilter size={"1rem"} />
-      </ActionIcon>
       <Drawer
         hiddenFrom={"md"}
         position="right"
@@ -70,13 +62,20 @@ export function CSimpleFilter({
             }}
           />
           <Flex justify="space-between" gap="sm">
-            <Button w="100%" onClick={onSearch}>
+            <Button
+              w="100%"
+              onClick={() => {
+                onSearch?.();
+                close();
+              }}
+            >
               {t("Search")}
             </Button>
             <Button
               w="100%"
               onClick={() => {
                 onClear?.();
+                close();
               }}
               variant="outline"
             >
@@ -85,6 +84,14 @@ export function CSimpleFilter({
           </Flex>
         </Flex>
       </Drawer>
+      <ActionIcon
+        m={0}
+        variant="transparent"
+        onClick={open}
+        hiddenFrom="md"
+      >
+        <IconFilter size={"1rem"} />
+      </ActionIcon>
       <Flex
         justify="end"
         align="center"

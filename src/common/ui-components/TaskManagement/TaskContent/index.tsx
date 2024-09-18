@@ -28,7 +28,7 @@ import {
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { IconInfoCircle, IconMessage } from "@tabler/icons-react";
-import deepEqual from "lodash.isequal";
+import isEqual from "lodash.isequal";
 import { useCallback, useState } from "react";
 import { UserSelector } from "../../UserManagement/UserSelector";
 import { StatusSelector } from "../StatusSelector";
@@ -172,7 +172,7 @@ function SaveTaskButton({
       <Button
         size="xs"
         onClick={() => {
-          if (deepEqual(form, task)) {
+          if (isEqual(form, task)) {
             failed("Invalid request", "Nothing to save!");
             return;
           }

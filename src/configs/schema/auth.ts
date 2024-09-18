@@ -18,6 +18,8 @@ export const authenticationPayloadSchema = z.object({
   fullName: optionalStringSchema,
   isSystemAdmin: optionalBooleanSchema,
   isAdmin: optionalBooleanSchema,
+  key: stringSchema,
+  iv: stringSchema,
   client: z
     .object({
       id: numberSchema,

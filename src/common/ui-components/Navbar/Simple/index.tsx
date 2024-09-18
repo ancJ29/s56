@@ -1,7 +1,7 @@
 import useTranslation from "@/common/hooks/useTranslation";
 import useAuthStore from "@/common/stores/auth";
 import { TablerIcon } from "@/common/ui-components/TablerIcon";
-import { UnstyledButton } from "@mantine/core";
+import { Text, UnstyledButton } from "@mantine/core";
 import { IconLogout } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +22,7 @@ export function SimpleNavbar() {
     setActive(label || menu[0]?.label);
   }, []);
   const links = (payload?.client?.menu || []).map((item) => (
-    <a
+    <Text
       className={classes.link}
       data-active={item.label === active || undefined}
       key={item.label}
@@ -38,7 +38,7 @@ export function SimpleNavbar() {
         stroke={1.5}
       />
       <span>{t(item.label)}</span>
-    </a>
+    </Text>
   ));
 
   return (

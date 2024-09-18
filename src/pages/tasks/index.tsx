@@ -15,11 +15,24 @@ import { GanttChart } from "@/common/ui-components/TaskManagement/GanttChart";
 import { StatusSelector } from "@/common/ui-components/TaskManagement/StatusSelector";
 import { TaskContent } from "@/common/ui-components/TaskManagement/TaskContent";
 import { UserSelector } from "@/common/ui-components/UserManagement/UserSelector";
-import { Flex, Switch, TextInput } from "@mantine/core";
+import { Flex, Space, Switch, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useCounter, useDisclosure } from "@mantine/hooks";
+import isEqual from "lodash.isequal";
 import { useCallback, useEffect, useState } from "react";
 import { configs } from "./config";
+
+type FilterProps = {
+  title?: string;
+  assigneeId?: string;
+  status?: string;
+};
+
+const defaultFilter = {
+  title: "",
+  assigneeId: "",
+  status: "",
+};
 
 export default function Tasks() {
   const isMobile = useIsMobile();
@@ -31,17 +44,12 @@ export default function Tasks() {
   const [selectedTask, setSelectedTask] = useState<Task | undefined>(
     undefined,
   );
+  const [currentFilter, setCurrentFilter] = useState<FilterProps>({
+    ...defaultFilter,
+  });
 
-  const filter = useForm<{
-    title?: string;
-    assigneeId?: string;
-    status?: string;
-  }>({
-    initialValues: {
-      title: "",
-      assigneeId: "",
-      status: "",
-    },
+  const filter = useForm<FilterProps>({
+    initialValues: { ...defaultFilter },
   });
 
   useEffect(() => {
@@ -51,12 +59,17 @@ export default function Tasks() {
   }, []);
 
   const reload = useCallback(
-    (filter?: { status?: string; assigneeId?: string }) => {
+    (filter?: FilterProps) => {
+      logger.debug("Filter", filter, currentFilter);
+      if (isEqual(filter, currentFilter)) {
+        return;
+      }
       getTasks(filter).then((tasks) => {
+        setCurrentFilter(filter || {});
         setTasks(tasks);
       });
     },
-    [filter],
+    [currentFilter],
   );
 
   const selectTask = useCallback(
@@ -123,17 +136,14 @@ export default function Tasks() {
     <>
       <Flex justify="space-between" align="end" gap="md" key={count}>
         <ViewSwitcher dense={dense} onToggle={toggle} />
+        <Space />
         <CSimpleFilter
           onSearch={() => {
             reload(filter.getValues());
           }}
           onClear={() => {
-            filter.setValues({
-              title: "",
-              assigneeId: "",
-              status: "",
-            });
-            reload();
+            filter.setValues({ ...defaultFilter });
+            reload(filter.getValues());
             handlers.increment();
             logger.info("Filter cleared", filter.getValues());
           }}
