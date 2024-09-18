@@ -89,6 +89,8 @@ export const getTasksSchema = builder({
   group: z.literal(APP_ACTION_GROUPS.TASK),
   action: z.literal(APP_ACTIONS.GET_TASKS),
   params: z.object({
+    from: timestampSchema.optional(),
+    to: timestampSchema.optional(),
     taskIds: stringSchema.array().optional(),
     assigneeId: optionalStringSchema,
     status: optionalNumberSchema,

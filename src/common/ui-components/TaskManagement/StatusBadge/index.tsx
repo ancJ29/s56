@@ -6,7 +6,7 @@ import { useMemo } from "react";
 export function StatusBadge({ status }: { status: string }) {
   const [color, bg] = useMemo(() => {
     const colors = statusColors();
-    return [colors[status][0], colors[status][1]];
+    return [colors[status]?.[0], colors[status]?.[1]];
   }, [status]);
   const t = useTranslation();
   return (

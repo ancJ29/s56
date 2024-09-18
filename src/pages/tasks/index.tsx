@@ -16,22 +16,28 @@ import { StatusSelector } from "@/common/ui-components/TaskManagement/StatusSele
 import { TaskContent } from "@/common/ui-components/TaskManagement/TaskContent";
 import { UserSelector } from "@/common/ui-components/UserManagement/UserSelector";
 import { Flex, Space, Switch, TextInput } from "@mantine/core";
-import { useForm } from "@mantine/form";
+import { DatePickerInput } from "@mantine/dates";
+import { useForm, UseFormReturnType } from "@mantine/form";
 import { useCounter, useDisclosure } from "@mantine/hooks";
+import { IconCalendarMonth } from "@tabler/icons-react";
 import isEqual from "lodash.isequal";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { configs } from "./config";
 
 type FilterProps = {
   title?: string;
   assigneeId?: string;
   status?: string;
+  startDate?: Date;
+  endDate?: Date;
 };
 
 const defaultFilter = {
   title: "",
   assigneeId: "",
   status: "",
+  startDate: undefined,
+  endDate: undefined,
 };
 
 export default function Tasks() {
@@ -62,6 +68,11 @@ export default function Tasks() {
     (filter?: FilterProps) => {
       logger.debug("Filter", filter, currentFilter);
       if (isEqual(filter, currentFilter)) {
+        return;
+      }
+      currentFilter.title = filter?.title;
+      if (isEqual(filter, currentFilter)) {
+        setCurrentFilter(filter || {});
         return;
       }
       getTasks(filter).then((tasks) => {
@@ -112,8 +123,25 @@ export default function Tasks() {
       }
       onClose();
     },
-    [tasks],
+    [tasks, onClose],
   );
+
+  const _tasks = useMemo(() => {
+    logger.debug("Filtering tasks...");
+    const _tasks = tasks.filter((el) => {
+      if (currentFilter.title) {
+        return el.title.includes(currentFilter.title);
+      }
+      return true;
+    });
+    logger.debug(
+      "Filtering tasks",
+      currentFilter,
+      "total",
+      _tasks.length,
+    );
+    return _tasks;
+  }, [tasks, currentFilter]);
 
   if (isMobile && selectedTask) {
     return (
@@ -134,10 +162,12 @@ export default function Tasks() {
 
   return (
     <>
-      <Flex justify="space-between" align="end" gap="md" key={count}>
+      <Flex justify="space-between" align="end" gap="md">
         <ViewSwitcher dense={dense} onToggle={toggle} />
         <Space />
-        <CSimpleFilter
+        <Filter
+          key={count}
+          filter={filter}
           onSearch={() => {
             reload(filter.getValues());
           }}
@@ -147,32 +177,22 @@ export default function Tasks() {
             handlers.increment();
             logger.info("Filter cleared", filter.getValues());
           }}
-        >
-          <TextInput
-            placeholder={t("Task title")}
-            {...filter.getInputProps("title")}
-          />
-          <UserSelector
-            placeholder={t("Assignee")}
-            {...filter.getInputProps("assigneeId")}
-          />
-          <StatusSelector
-            placeholder={t("Status")}
-            {...filter.getInputProps("statusId")}
-          />
-        </CSimpleFilter>
+        />
       </Flex>
       <MobileDataList
         scrollAreaHeight="100%"
         onClick={(task) => selectTask(task.id)}
         tableData={{
           configs,
-          data: tasks,
+          data: _tasks,
         }}
       />
       <GanttChart
+        key={count}
         dense={dense}
-        tasks={tasks}
+        tasks={_tasks}
+        from={currentFilter.startDate?.getTime()}
+        to={currentFilter.endDate?.getTime()}
         onSelectTask={selectTask}
       />
       <CDrawer
@@ -212,5 +232,55 @@ function ViewSwitcher({
         onClick={onToggle}
       />
     </>
+  );
+}
+
+export function Filter({
+  filter,
+  onSearch,
+  onClear,
+}: {
+  filter: UseFormReturnType<
+    FilterProps,
+    (values: FilterProps) => FilterProps
+  >;
+  onSearch: () => void;
+  onClear: () => void;
+}) {
+  const t = useTranslation();
+  return (
+    <CSimpleFilter onSearch={onSearch} onClear={onClear}>
+      <DatePickerInput
+        w={{ md: "15rem" }}
+        rightSection={<IconCalendarMonth />}
+        placeholder={t("Start ~ End")}
+        type="range"
+        valueFormat={"DD/MM/YYYY"}
+        value={[
+          filter.values.startDate || null,
+          filter.values.endDate || null,
+        ]}
+        onChange={([start, end]) => {
+          logger.debug("Date range", start, end);
+          filter.setValues({
+            ...filter.getValues(),
+            startDate: start ? new Date(start) : undefined,
+            endDate: end ? new Date(end) : undefined,
+          });
+        }}
+      />
+      <TextInput
+        placeholder={t("Task title")}
+        {...filter.getInputProps("title")}
+      />
+      <UserSelector
+        placeholder={t("Assignee")}
+        {...filter.getInputProps("assigneeId")}
+      />
+      <StatusSelector
+        placeholder={t("Status")}
+        {...filter.getInputProps("status")}
+      />
+    </CSimpleFilter>
   );
 }

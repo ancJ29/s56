@@ -24,11 +24,7 @@ export default function CollapseAppShell({
   const t = useTranslation();
   const { header } = useAppStore();
   const { payload } = useAuthStore();
-
-  // prettier-ignore
-  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
-  // prettier-ignore
-  const [mobileOpened, { toggle: toggleMobile, close: closeMobile }] = useDisclosure(false);
+  const [collapsed, { toggle }] = useDisclosure(true);
 
   return (
     <AppShell
@@ -38,7 +34,10 @@ export default function CollapseAppShell({
       navbar={{
         width: 300,
         breakpoint: "sm",
-        collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
+        collapsed: {
+          mobile: collapsed,
+          desktop: collapsed,
+        },
       }}
       padding="md"
     >
@@ -49,15 +48,8 @@ export default function CollapseAppShell({
           ) : (
             <>
               <Burger
-                opened={mobileOpened}
-                onClick={toggleMobile}
-                hiddenFrom="sm"
-                size="sm"
-              />
-              <Burger
-                opened={desktopOpened}
-                onClick={toggleDesktop}
-                visibleFrom="sm"
+                opened={!collapsed}
+                onClick={toggle}
                 size="sm"
               />
             </>
@@ -87,7 +79,7 @@ export default function CollapseAppShell({
           )}
         </Group>
       </AppShell.Header>
-      <AppShell.Navbar p="md" onClick={closeMobile}>
+      <AppShell.Navbar p="md" onClick={toggle}>
         <SimpleNavbar />
       </AppShell.Navbar>
       <AppShell.Main>{children}</AppShell.Main>

@@ -23,7 +23,11 @@
   "Status": "Trạng thái",
   "Task Name": "Công việc",
   "There's no note": "Chưa có ghi chú",
-  "Task Title": "Công việc",
+  "Task title": "Công việc",
   "User name": "Tên đăng nhập",
-  "Your password": "Mật khẩu"
+  "Your password": "Mật khẩu",
+  "Filter": "Lọc",
+  "Clear": "Xóa",
+  "Search": "Tìm kiếm",
+  "X": "X"
 }

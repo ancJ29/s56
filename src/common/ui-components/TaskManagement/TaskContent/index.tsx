@@ -87,8 +87,8 @@ export function TaskContent({
         {isNew && (
           <TextInput
             w="100%"
-            label={t("Task Title")}
-            placeholder={t("Task Title")}
+            label={t("Task title")}
+            placeholder={t("Task title")}
             value={form.title}
             onChange={(e) => {
               setForm({ ...form, title: e.currentTarget.value });
@@ -298,7 +298,7 @@ function TitleAndDescription({
       <Box visibleFrom="md">
         <TextInput
           fw="600"
-          label={t("Task Title")}
+          label={t("Task title")}
           value={form.title}
           onChange={(e) => {
             setForm({

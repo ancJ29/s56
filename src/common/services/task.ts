@@ -30,22 +30,26 @@ export type Note = Task["notes"][0];
 export async function getTasks(filter?: {
   status?: string;
   assigneeId?: string;
+  startDate?: Date;
+  endDate?: Date;
 }): Promise<Task[]> {
   const action = APP_ACTIONS.GET_TASKS;
+  const client = await _getClient();
   const res = await callApi(
     {
       group,
       action,
       payload: {
+        from: filter?.startDate?.getTime() || undefined,
+        to: filter?.endDate?.getTime() || undefined,
         assigneeId: filter?.assigneeId || undefined,
         status: filter?.status
-          ? _statusToId(filter.status)
+          ? _statusToId(filter.status, client)
           : undefined,
       },
     },
     getTasksSchema,
   );
-  const client = await _getClient();
   const tasks = res?.map(({ status: statusId, ...el }) => ({
     ...el,
     status: _statusIdToString(statusId, client),
@@ -171,6 +175,7 @@ function _statusToId(status: string, client?: ClientMetaData) {
   const map = Object.fromEntries(
     Object.entries(statusMap).map(([key, [value]]) => [value, key]),
   );
+  logger.debug("Status map", map);
   if (map[status] === undefined) {
     throw new Error(`Unknown status: ${status}`);
   }

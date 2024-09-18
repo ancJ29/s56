@@ -86,7 +86,8 @@ async function _apiRequest<T>(payload: UnknownRecord) {
   }
   const key = authStore.getState().payload?.key || "";
   const iv = authStore.getState().payload?.iv || "";
-  const encoded = key && iv ? await _encode(key, iv, payload) : undefined;
+  const encoded =
+    key && iv ? await _encode(key, iv, payload) : undefined;
   return axios
     .request<{
       result?: T;
@@ -106,6 +107,7 @@ async function _apiRequest<T>(payload: UnknownRecord) {
       if (res.data.result) {
         return res.data.result;
       }
+      authStore.getState().logout();
       throw new Error("API response is invalid");
     });
 }
@@ -296,7 +298,8 @@ async function _decrypt<T>(
 async function _encode(
   key: string,
   iv: string,
-  payload: UnknownRecord) {
+  payload: UnknownRecord,
+) {
   if (!key || !iv) {
     throw new Error("Key or IV is missing");
   }
@@ -308,10 +311,7 @@ async function _encode(
   return data.slice(0, mark) + __r + data.slice(mark);
 }
 
-async function _decode<T>(
-  key: string,
-  iv: string,
-  data: string) {
+async function _decode<T>(key: string, iv: string, data: string) {
   if (!key || !iv) {
     throw new Error("Key or IV is missing");
   }

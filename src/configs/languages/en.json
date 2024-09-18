@@ -23,7 +23,11 @@
   "Status": "Status",
   "Task Name": "Task Name",
   "There's no note": "There's no note",
-  "Task Title": "Title",
+  "Task title": "Title",
   "User name": "User name",
-  "Your password": "Password"
+  "Your password": "Password",
+  "Filter": "Filter",
+  "Clear": "Clear",
+  "Search": "Search",
+  "X": "X"
 }

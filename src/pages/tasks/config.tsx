@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 
 export const configs = [
   {
-    key: "Task Title",
+    key: "Task title",
     label: "Task",
     render: (task: Task) => {
       return (

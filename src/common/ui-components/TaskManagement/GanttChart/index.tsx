@@ -5,6 +5,7 @@ import { ONE_DAY } from "@/constants";
 import { dropTime } from "@/utils";
 import {
   Box,
+  Center,
   Container,
   Flex,
   ScrollArea,
@@ -12,6 +13,7 @@ import {
   Text,
   Tooltip,
 } from "@mantine/core";
+import { IconDatabaseOff } from "@tabler/icons-react";
 import clsx from "clsx";
 import dayjs from "dayjs";
 import { useMemo } from "react";
@@ -23,12 +25,15 @@ export function GanttChart({
   tasks,
   dense = true,
   total = 30,
+  from,
+  to,
   // startFrom = dropTime(Date.now(), ONE_DAY),
   onSelectTask,
 }: {
   dense?: boolean;
   total?: number;
-  startFrom?: number;
+  from?: number;
+  to?: number;
   tasks: Task[];
   onSelectTask: (taskId: string) => void;
 }) {
@@ -38,6 +43,12 @@ export function GanttChart({
   const dw = 75;
 
   const { startFrom } = useMemo(() => {
+    if (from && to) {
+      return {
+        startFrom: from - ONE_DAY,
+        total: Math.ceil((to - from) / ONE_DAY) + 1,
+      };
+    }
     let first = Math.min(...tasks.map((task) => task.startDate || 0));
     if (first === Infinity || first === 0) {
       first = dropTime(Date.now(), ONE_DAY);
@@ -287,6 +298,24 @@ export function GanttChart({
           </Table>
         </ScrollArea>
       </Container>
+      {!tasks.length && (
+        <Container visibleFrom="md" fluid>
+          <Flex
+            h="20vh"
+            w="100%"
+            justify="center"
+            style={{
+              border: "1px solid #f0f0f0",
+              borderTop: "none",
+            }}
+          >
+            <Center>
+              <IconDatabaseOff />
+              {t("No records found")}
+            </Center>
+          </Flex>
+        </Container>
+      )}
     </>
   );
 }
