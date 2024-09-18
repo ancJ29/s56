@@ -1,4 +1,3 @@
-import useIsMobile from "@/common/hooks/useIsMobile";
 import useTranslation from "@/common/hooks/useTranslation";
 import useAppStore from "@/common/stores/app";
 import useAuthStore from "@/common/stores/auth";
@@ -22,7 +21,6 @@ export default function CollapseAppShell({
   title,
   children,
 }: WrapperComponentProps & { title?: string }) {
-  const isMobile = useIsMobile();
   const t = useTranslation();
   const { header } = useAppStore();
   const { payload } = useAuthStore();
