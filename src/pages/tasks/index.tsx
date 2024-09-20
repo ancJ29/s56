@@ -3,7 +3,9 @@ import useIsMobile from "@/common/hooks/useIsMobile";
 import useTranslation from "@/common/hooks/useTranslation";
 import {
   blankTask,
+  getGroups,
   getTasks,
+  type Group,
   type Task,
 } from "@/common/services/task";
 import { CAddIcon } from "@/common/ui-components/CKits/CAddIcon";
@@ -45,6 +47,7 @@ export default function Tasks() {
   const t = useTranslation();
   const [count, handlers] = useCounter(0);
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [groups, setGroups] = useState<Group[]>([]);
   const [opened, { open, close }] = useDisclosure(false);
   const [dense, { toggle }] = useDisclosure(false);
   const [selectedTask, setSelectedTask] = useState<Task | undefined>(
@@ -61,6 +64,9 @@ export default function Tasks() {
   useEffect(() => {
     getTasks().then((tasks) => {
       setTasks(tasks);
+    });
+    getGroups().then((groups) => {
+      setGroups(groups);
     });
   }, []);
 
@@ -152,6 +158,7 @@ export default function Tasks() {
         }
       >
         <TaskContent
+          groups={groups}
           task={selectedTask}
           onSave={onTaskSaved}
           onClose={onClose}
@@ -201,6 +208,7 @@ export default function Tasks() {
       >
         {selectedTask && (
           <TaskContent
+            groups={groups}
             task={selectedTask}
             onSave={onTaskSaved}
             onClose={onClose}

@@ -17,6 +17,8 @@ export const registerTaskSchema = builder({
     title: stringSchema,
     description: stringSchema,
     assigneeId: optionalStringSchema,
+    groupId: optionalStringSchema,
+    group: optionalStringSchema,
     status: numberSchema,
     startDate: timestampSchema.optional(),
     endDate: timestampSchema.optional(),
@@ -53,6 +55,8 @@ export const updateTaskSchema = builder({
   action: z.literal(APP_ACTIONS.UPDATE_TASK),
   params: z.object({
     taskId: stringSchema,
+    groupId: optionalStringSchema,
+    group: optionalStringSchema,
     title: optionalStringSchema,
     description: optionalStringSchema,
     startDate: timestampSchema.optional(),
@@ -79,6 +83,8 @@ const taskSchema = z.object({
   assigneeId: optionalStringSchema,
   reporterId: stringSchema,
   notes: noteSchema.array(),
+  group: optionalStringSchema,
+  groupId: optionalStringSchema,
   startDate: timestampSchema.optional(),
   endDate: timestampSchema.optional(),
   createdAt: timestampSchema,
@@ -116,4 +122,14 @@ export const deleteTaskSchema = builder({
     taskId: stringSchema,
   }),
   result: successSchema,
+});
+
+export const getGroupsSchema = builder({
+  group: z.literal(APP_ACTION_GROUPS.TASK),
+  action: z.literal(APP_ACTIONS.GET_GROUPS),
+  params: z.object({}),
+  result: z.array(z.object({
+    id: stringSchema,
+    title: stringSchema,
+  })),
 });

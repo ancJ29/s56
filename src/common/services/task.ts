@@ -6,6 +6,7 @@ import {
 } from "@/configs/enums/actions";
 import {
   addNoteSchema,
+  getGroupsSchema,
   getTasksSchema,
   registerTaskSchema,
   removeNoteSchema,
@@ -26,6 +27,20 @@ export type Task = Omit<TaskFromServer, "status"> & {
 };
 
 export type Note = Task["notes"][0];
+
+export type Group = z.infer<typeof getGroupsSchema.result>[0];
+
+export async function getGroups() {
+  const action = APP_ACTIONS.GET_GROUPS;
+  return await callApi({
+    group,
+    action,
+    payload: {}
+  }, getGroupsSchema, {
+    cached: true,
+    key: "tasks.groups.4wS3maA",
+  }) || [];
+}
 
 export async function getTasks(filter?: {
   status?: string;
@@ -61,6 +76,10 @@ export async function getTasks(filter?: {
 export async function registerTask(task: Task) {
   const action = APP_ACTIONS.REGISTER_TASK;
   const client = await _getClient();
+  let groupId: string | undefined = task.groupId
+  if (!groupId || groupId === "00000000000000000000") {
+    groupId = undefined
+  }
   const res = await callApi(
     {
       group,
@@ -68,6 +87,8 @@ export async function registerTask(task: Task) {
       payload: {
         title: task.title,
         assigneeId: task.assigneeId,
+        groupId,
+        group: task.group,
         description: task.description,
         status: _statusToId(task.status, client),
         startDate: task.startDate,
@@ -82,6 +103,10 @@ export async function registerTask(task: Task) {
 export async function saveTask(task: Task) {
   const action = APP_ACTIONS.UPDATE_TASK;
   const client = await _getClient();
+  let groupId: string | undefined = task.groupId
+  if (!groupId || groupId === "00000000000000000000") {
+    groupId = undefined
+  }
   await callApi(
     {
       group,
@@ -90,6 +115,8 @@ export async function saveTask(task: Task) {
         taskId: task.id,
         title: task.title,
         assigneeId: task.assigneeId,
+        groupId,
+        group: task.group,
         description: task.description,
         startDate: task.startDate,
         status: _statusToId(task.status, client),

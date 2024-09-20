@@ -65,3 +65,7 @@ export function dateFromTimestamp(date?: number | null) {
 export function dateAsTimestamp(date?: Date | null) {
   return date ? date.getTime() : undefined;
 }
+
+export function randomElement<T>(arr: T[]) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}

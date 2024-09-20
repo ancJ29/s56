@@ -19,7 +19,7 @@ export async function callApi<G, A, P, R>(
   { group, action, payload }: RequestPayload,
   schema: ServiceSchema<G, A, P, R>,
   opt?: {
-    failed: R | null | undefined;
+    failed?: R | null | undefined;
     cached?: boolean;
     key?: string;
     ttl?: number; // in milliseconds
@@ -54,7 +54,7 @@ export async function callApi<G, A, P, R>(
     const data = schema.result.safeParse(res);
     if (data.success) {
       if (opt?.cached) {
-        if (!opt.key || !opt.ttl) {
+        if (!opt.key) {
           if (IS_DEV) {
             throw new Error(
               "key and ttl must be provided for caching",
@@ -62,7 +62,7 @@ export async function callApi<G, A, P, R>(
           }
         } else {
           cache.set(opt.key, data.data as UnknownRecord, {
-            ttl: opt.ttl,
+            ttl: opt.ttl || ONE_HOUR,
           });
         }
       }

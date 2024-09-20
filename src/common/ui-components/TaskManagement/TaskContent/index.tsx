@@ -7,7 +7,8 @@ import {
   registerTask,
   removeNote,
   saveTask,
-  Task,
+  type Group,
+  type Task,
 } from "@/common/services/task";
 import useAuthStore from "@/common/stores/auth";
 import { NoteInput } from "@/common/ui-components/TaskManagement/NoteInput";
@@ -19,6 +20,7 @@ import {
   Divider,
   Flex,
   ScrollArea,
+  Select,
   SimpleGrid,
   Stack,
   Tabs,
@@ -27,6 +29,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
+import { useDisclosure } from "@mantine/hooks";
 import { IconInfoCircle, IconMessage } from "@tabler/icons-react";
 import isEqual from "lodash.isequal";
 import { useCallback, useState } from "react";
@@ -35,9 +38,11 @@ import { StatusSelector } from "../StatusSelector";
 
 export function TaskContent({
   task,
+  groups,
   onClose,
   onSave,
 }: {
+  groups: Group[];
   task: Task;
   onClose?: () => void;
   onSave?: (_: Task) => void;
@@ -85,17 +90,28 @@ export function TaskContent({
         }}
       >
         {isNew && (
-          <TextInput
-            w="100%"
-            label={t("Task title")}
-            placeholder={t("Task title")}
-            value={form.title}
-            onChange={(e) => {
-              setForm({ ...form, title: e.currentTarget.value });
-            }}
-          />
+          <>
+            <TextInput
+              w="100%"
+              label={t("Task title")}
+              placeholder={t("Task title")}
+              value={form.title}
+              onChange={(e) => {
+                setForm({ ...form, title: e.currentTarget.value });
+              }}
+            />
+            <GroupSelector
+              groups={groups}
+              form={form}
+              setForm={setForm}
+            />
+          </>
         )}
-        <TitleAndDescription form={form} setForm={setForm} />
+        <TitleAndDescription
+          form={form}
+          groups={groups}
+          setForm={setForm}
+        />
         <Tabs defaultValue="information">
           <Tabs.List>
             <Tabs.Tab
@@ -139,7 +155,11 @@ export function TaskContent({
         flexDirection: "column",
       }}
     >
-      <TitleAndDescription form={form} setForm={setForm} />
+      <TitleAndDescription
+        groups={groups}
+        form={form}
+        setForm={setForm}
+      />
       <Attributes form={form} setForm={setForm} />
       <SaveTaskButton
         task={task}
@@ -287,8 +307,10 @@ function Notes({
 
 function TitleAndDescription({
   form,
+  groups,
   setForm,
 }: {
+  groups: Group[];
   form: Task;
   setForm: (_: Task) => void;
 }) {
@@ -306,6 +328,11 @@ function TitleAndDescription({
               title: e.currentTarget.value,
             });
           }}
+        />
+        <GroupSelector
+          groups={groups}
+          form={form}
+          setForm={setForm}
         />
       </Box>
       <Textarea
@@ -382,5 +409,64 @@ function Attributes({
         />
       </SimpleGrid>
     </>
+  );
+}
+
+function GroupSelector({
+  groups,
+  form,
+  setForm,
+}: {
+  setForm: (_: Task) => void;
+  form: Task;
+  groups: Group[];
+}) {
+  const t = useTranslation();
+  const [edit, { toggle }] = useDisclosure();
+  return (
+    <Flex justify="space-between" align="end" gap={"sm"}>
+      {edit ? (
+        <TextInput
+          w="100%"
+          label={t("Task group")}
+          placeholder={t("Task title")}
+          value={form.group}
+          onChange={(e) => {
+            const group = e.currentTarget.value;
+            const groupId =
+              groups.find((el) => el.title === group)?.id ||
+              "00000000000000000000";
+            setForm({ ...form, group, groupId });
+          }}
+        />
+      ) : (
+        <Select
+          w="100%"
+          label={t("Task group")}
+          data={groups.map((el) => ({
+            value: el.id,
+            label: el.title,
+          }))}
+          value={form.groupId}
+          onChange={(groupId) => {
+            setForm({
+              ...form,
+              group:
+                groups.find((el) => el.id === groupId)?.title || "",
+              groupId: groupId || "00000000000000000000",
+            });
+          }}
+        />
+      )}
+      <Button
+        size="xs"
+        variant="outline"
+        fz="10px"
+        w="5rem"
+        onClick={toggle}
+      >
+        {t(edit ? "Select" : "Input")}
+      </Button>
+    </Flex>
   );
 }

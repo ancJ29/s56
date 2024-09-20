@@ -9,6 +9,7 @@ import { getClientMetaDataSchema, updateTranslationSchema } from "./client";
 import {
   addNoteSchema,
   deleteTaskSchema,
+  getGroupsSchema,
   getTaskSchema,
   getTasksSchema,
   registerTaskSchema,
@@ -43,6 +44,7 @@ export const C_SERVICE_SCHEMA = {
       markUserAsSystemAdminSchema.payload,
       getTasksSchema.payload,
       getTaskSchema.payload,
+      getGroupsSchema.payload,
       registerTaskSchema.payload,
       updateTaskSchema.payload,
       deleteTaskSchema.payload,
@@ -60,6 +62,7 @@ export const C_SERVICE_SCHEMA = {
       markUserAsSystemAdminSchema.result,
       getTasksSchema.result,
       getTaskSchema.result,
+      getGroupsSchema.result,
       registerTaskSchema.result,
       updateTaskSchema.result,
       deleteTaskSchema.result,

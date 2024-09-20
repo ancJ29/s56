@@ -58,6 +58,11 @@ export const configs = [
     },
   },
   {
+    key: "group",
+    label: "Task group",
+    field: "group",
+  },
+  {
     key: "reporter",
     label: "Reporter",
     render: (task: Task) => {

@@ -16,13 +16,14 @@ import {
 import { IconDatabaseOff } from "@tabler/icons-react";
 import clsx from "clsx";
 import dayjs from "dayjs";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { UserLabel } from "../../UserManagement/UserLabel";
 import { StatusBadge } from "../StatusBadge";
 import classes from "./styles.module.scss";
 
 export function GanttChart({
   tasks,
+  displayGroup = true,
   dense = true,
   total = 30,
   from,
@@ -30,6 +31,7 @@ export function GanttChart({
   // startFrom = dropTime(Date.now(), ONE_DAY),
   onSelectTask,
 }: {
+  displayGroup?: boolean;
   dense?: boolean;
   total?: number;
   from?: number;
@@ -41,6 +43,37 @@ export function GanttChart({
   const t = useTranslation();
   const baseWidth = 40;
   const dw = 75;
+  const [groupVisibilities, setGroupVisibilities] = useState<
+    Record<string, boolean>
+  >({});
+
+  const groups = useMemo(() => {
+    const groups = Object.fromEntries(
+      tasks
+        .filter((el) => Boolean(el.groupId))
+        .map((el) => [
+          el.groupId || "00000000000000000000",
+          {
+            groupId: el.groupId || "00000000000000000000",
+            title: el.group || "",
+            tasks: [] as Task[],
+          },
+        ]),
+    );
+    setGroupVisibilities(
+      Object.fromEntries(
+        Object.keys(groups).map((key) => [key, true]),
+      ),
+    );
+    tasks.forEach((task) => {
+      groups[task.groupId || "00000000000000000000"]?.tasks.push(
+        task,
+      );
+    });
+    return Object.values(groups).sort((a, b) =>
+      a.groupId.localeCompare(b.groupId),
+    );
+  }, [tasks]);
 
   const { startFrom } = useMemo(() => {
     if (from && to) {
@@ -113,112 +146,30 @@ export function GanttChart({
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
-            {tasks.map((task) => {
-              return (
-                <Table.Tr
-                  key={task.id}
-                  style={{
-                    cursor: "pointer",
+            {displayGroup ? (
+              groups.map((group) => (
+                <GroupTasks
+                  key={group.groupId}
+                  opened={groupVisibilities[group.groupId] ?? true}
+                  group={group}
+                  dense={dense}
+                  onToggle={() => {
+                    setGroupVisibilities({
+                      ...groupVisibilities,
+                      [group.groupId]:
+                        !groupVisibilities[group.groupId],
+                    });
                   }}
-                  onClick={() => onSelectTask(task.id)}
-                >
-                  <Table.Td
-                    w={dense ? "100%" : undefined}
-                    p={0}
-                    style={{
-                      cursor: "pointer",
-                    }}
-                    className={classes.ceilHeight}
-                  >
-                    <Tooltip label={task.title} position="top-start">
-                      <Box>
-                        <Text
-                          className={classes.title}
-                          style={{
-                            overflow: "hidden",
-                          }}
-                        >
-                          {task.title}
-                        </Text>
-                        {dense && (
-                          <>
-                            <Flex
-                              justify="space-between"
-                              align="center"
-                              px={".5rem"}
-                              py={0}
-                              fz={"0.8rem"}
-                              color="dimmed"
-                              className={classes.subTitle}
-                            >
-                              <Flex
-                                gap={5}
-                                justify="start"
-                                align="center"
-                              >
-                                {t("Assignee")}:{" "}
-                                <UserLabel
-                                  size="1.3rem"
-                                  userId={task.assigneeId}
-                                />
-                              </Flex>
-                              <StatusBadge status={task.status} />
-                            </Flex>
-                          </>
-                        )}
-                      </Box>
-                    </Tooltip>
-                  </Table.Td>
-                  <Table.Td
-                    className={clsx(
-                      classes.dateCell,
-                      classes.ceilHeight,
-                    )}
-                    align="right"
-                    hidden={dense}
-                  >
-                    <Flex
-                      gap={5}
-                      justify="space-between"
-                      align="center"
-                    >
-                      <UserLabel
-                        size="1.3rem"
-                        userId={task.assigneeId}
-                      />
-                    </Flex>
-                  </Table.Td>
-                  <Table.Td
-                    w="6rem"
-                    className={clsx(
-                      classes.dateCell,
-                      classes.ceilHeight,
-                    )}
-                    hidden={dense}
-                  >
-                    <StatusBadge status={task.status} />
-                  </Table.Td>
-                  <Table.Td
-                    className={clsx(
-                      classes.dateCell,
-                      classes.ceilHeight,
-                    )}
-                    hidden={dense}
-                  >
-                    {_dateString(task.startDate || 0)}
-                  </Table.Td>
-                  <Table.Td
-                    className={clsx(
-                      classes.dateCell,
-                      classes.ceilHeight,
-                    )}
-                    hidden={dense}
-                  >
-                    {_dateString(task.endDate || 0)}
-                  </Table.Td>
-                </Table.Tr>
-              );
-            })}
+                  onSelectTask={onSelectTask}
+                />
+              ))
+            ) : (
+              <TaskRows
+                tasks={tasks}
+                dense={dense}
+                onSelectTask={onSelectTask}
+              />
+            )}
           </Table.Tbody>
         </Table>
         <ScrollArea
@@ -267,33 +218,36 @@ export function GanttChart({
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
-              {tasks.map((task) => {
-                return (
-                  <Table.Tr key={task.id}>
-                    {Array.from({ length: total }, (_, idx) => {
-                      const ts = startFrom + idx * ONE_DAY + 1;
-                      const start = task.startDate || 0;
-                      const end = (task.endDate || 0) + ONE_DAY;
-                      const active = ts > start && ts < end;
-                      return (
-                        <Table.Td
-                          key={ts}
-                          onClick={
-                            active
-                              ? () => onSelectTask(task.id)
-                              : undefined
-                          }
-                          className={clsx(classes.ceilHeight, {
-                            [classes.activeCell]: active,
-                          })}
-                        >
-                          &nbsp;
-                        </Table.Td>
-                      );
-                    })}
-                  </Table.Tr>
-                );
-              })}
+              {displayGroup ? (
+                groups.map((group) => {
+                  return (
+                    <GroupDates
+                      key={group.groupId}
+                      opened={
+                        groupVisibilities[group.groupId] ?? true
+                      }
+                      group={group}
+                      total={total}
+                      startFrom={startFrom}
+                      onToggle={() => {
+                        setGroupVisibilities({
+                          ...groupVisibilities,
+                          [group.groupId]:
+                            !groupVisibilities[group.groupId],
+                        });
+                      }}
+                      onSelectTask={onSelectTask}
+                    />
+                  );
+                })
+              ) : (
+                <TaskDatesRows
+                  tasks={tasks}
+                  total={total}
+                  startFrom={startFrom}
+                  onSelectTask={onSelectTask}
+                />
+              )}
             </Table.Tbody>
           </Table>
         </ScrollArea>
@@ -316,6 +270,288 @@ export function GanttChart({
           </Flex>
         </Container>
       )}
+    </>
+  );
+}
+
+function TaskRows({
+  opened,
+  tasks,
+  dense,
+  onSelectTask,
+}: {
+  opened?: boolean;
+  tasks: Task[];
+  dense: boolean;
+  onSelectTask: (taskId: string) => void;
+}) {
+  return (
+    <>
+      {tasks.map((task) => (
+        <TaskRow
+          key={task.id}
+          task={task}
+          dense={dense}
+          onSelectTask={onSelectTask}
+          hidden={!opened}
+        />
+      ))}
+    </>
+  );
+}
+
+function TaskRow({
+  hidden = false,
+  task,
+  dense,
+  onSelectTask,
+}: {
+  hidden?: boolean;
+  dense: boolean;
+  task: Task;
+  onSelectTask: (taskId: string) => void;
+}) {
+  const t = useTranslation();
+  return (
+    <Table.Tr hidden={hidden} onClick={() => onSelectTask(task.id)}>
+      <Table.Td
+        w={dense ? "100%" : undefined}
+        p={0}
+        style={{
+          cursor: "pointer",
+        }}
+        className={classes.ceilHeight}
+      >
+        <Tooltip label={task.title} position="top-start">
+          <Box>
+            <Text
+              pl="sm"
+              ml="sm"
+              className={classes.title}
+              style={{
+                overflow: "hidden",
+              }}
+            >
+              {task.title}
+            </Text>
+            {dense && (
+              <>
+                <Flex
+                  justify="space-between"
+                  align="center"
+                  px={".5rem"}
+                  py={0}
+                  fz={"0.8rem"}
+                  color="dimmed"
+                  className={classes.subTitle}
+                >
+                  <Flex gap={5} justify="start" align="center">
+                    {t("Assignee")}:{" "}
+                    <UserLabel
+                      size="1.3rem"
+                      userId={task.assigneeId}
+                    />
+                  </Flex>
+                  <StatusBadge status={task.status} />
+                </Flex>
+              </>
+            )}
+          </Box>
+        </Tooltip>
+      </Table.Td>
+      <Table.Td
+        className={clsx(classes.dateCell, classes.ceilHeight)}
+        align="right"
+        hidden={dense}
+      >
+        <Flex gap={5} justify="space-between" align="center">
+          <UserLabel size="1.3rem" userId={task.assigneeId} />
+        </Flex>
+      </Table.Td>
+      <Table.Td
+        w="6rem"
+        className={clsx(classes.dateCell, classes.ceilHeight)}
+        hidden={dense}
+      >
+        <StatusBadge status={task.status} />
+      </Table.Td>
+      <Table.Td
+        className={clsx(classes.dateCell, classes.ceilHeight)}
+        hidden={dense}
+      >
+        {_dateString(task.startDate || 0)}
+      </Table.Td>
+      <Table.Td
+        className={clsx(classes.dateCell, classes.ceilHeight)}
+        hidden={dense}
+      >
+        {_dateString(task.endDate || 0)}
+      </Table.Td>
+    </Table.Tr>
+  );
+}
+
+export function TaskDatesRows({
+  opened,
+  tasks,
+  total,
+  startFrom,
+  onSelectTask,
+}: {
+  opened?: boolean;
+  tasks: Task[];
+  total: number;
+  startFrom: number;
+  onSelectTask: (taskId: string) => void;
+}) {
+  return (
+    <>
+      {tasks.map((task) => (
+        <TaskDatesRow
+          hidden={!opened}
+          key={task.id}
+          task={task}
+          total={total}
+          startFrom={startFrom}
+          onSelectTask={onSelectTask}
+        />
+      ))}
+    </>
+  );
+}
+
+function TaskDatesRow({
+  hidden = false,
+  task,
+  total,
+  startFrom,
+  onSelectTask,
+}: {
+  hidden?: boolean;
+  task: Task;
+  total: number;
+  startFrom: number;
+  onSelectTask: (taskId: string) => void;
+}) {
+  return (
+    <Table.Tr
+      hidden={hidden}
+      style={{
+        cursor: "pointer",
+      }}
+    >
+      {Array.from({ length: total }, (_, idx) => {
+        const ts = startFrom + idx * ONE_DAY + 1;
+        const start = task.startDate || 0;
+        const end = (task.endDate || 0) + ONE_DAY;
+        const active = ts > start && ts < end;
+        return (
+          <Table.Td
+            key={ts}
+            onClick={active ? () => onSelectTask(task.id) : undefined}
+            className={clsx(classes.ceilHeight, {
+              [classes.activeCell]: active,
+            })}
+          >
+            &nbsp;
+          </Table.Td>
+        );
+      })}
+    </Table.Tr>
+  );
+}
+
+function GroupTasks({
+  group,
+  dense,
+  opened = true,
+  onToggle,
+  onSelectTask,
+}: {
+  opened?: boolean;
+  dense: boolean;
+  group: {
+    groupId: string;
+    title: string;
+    tasks: Task[];
+  };
+  onToggle?: () => void;
+  onSelectTask: (taskId: string) => void;
+}) {
+  return (
+    <>
+      <Table.Tr
+        p={0}
+        className={classes.ceilHeight}
+        style={{
+          cursor: "pointer",
+        }}
+        onClick={onToggle}
+      >
+        <Table.Td
+          colSpan={dense ? 1 : 5}
+          bg="#ccc"
+          fw="bold"
+          className={classes.ceilHeight}
+        >
+          {group.title}
+        </Table.Td>
+      </Table.Tr>
+      <TaskRows
+        opened={opened}
+        tasks={group.tasks}
+        dense={dense}
+        onSelectTask={onSelectTask}
+      />
+    </>
+  );
+}
+
+function GroupDates({
+  group,
+  total,
+  startFrom,
+  opened = true,
+  onToggle,
+  onSelectTask,
+}: {
+  opened?: boolean;
+  total: number;
+  startFrom: number;
+  group: {
+    groupId: string;
+    title: string;
+    tasks: Task[];
+  };
+  onToggle?: () => void;
+  onSelectTask: (taskId: string) => void;
+}) {
+  return (
+    <>
+      <Table.Tr
+        p={0}
+        className={classes.ceilHeight}
+        style={{
+          cursor: "pointer",
+        }}
+        onClick={onToggle}
+      >
+        <Table.Td
+          colSpan={total}
+          bg="#ccc"
+          className={classes.ceilHeight}
+          c="#ccc"
+        >
+          aaa
+        </Table.Td>
+      </Table.Tr>
+      <TaskDatesRows
+        opened={opened}
+        tasks={group.tasks}
+        total={total}
+        startFrom={startFrom}
+        onSelectTask={onSelectTask}
+      />
     </>
   );
 }

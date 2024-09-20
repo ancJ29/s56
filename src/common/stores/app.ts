@@ -39,7 +39,6 @@ const appStore = create<AppState>((set) => ({
     }, 3e3);
   },
   stopLoading: () => {
-    logger.debug("stopLoading...");
     if (timer) {
       clearTimeout(timer);
     }
