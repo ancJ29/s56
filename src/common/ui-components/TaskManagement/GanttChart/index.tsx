@@ -273,7 +273,7 @@ export function GanttChart({
                     {Array.from({ length: total }, (_, idx) => {
                       const ts = startFrom + idx * ONE_DAY + 1;
                       const start = task.startDate || 0;
-                      const end = task.endDate || 0;
+                      const end = (task.endDate || 0) + ONE_DAY;
                       const active = ts > start && ts < end;
                       return (
                         <Table.Td

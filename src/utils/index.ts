@@ -50,3 +50,18 @@ export function cleanObj<T extends Record<string, unknown>>(obj: T) {
   }
   return obj;
 }
+
+export function dateFromTimestamp(date?: number | null) {
+  if (!date) {
+    return undefined;
+  }
+  const d = new Date(date);
+  if (isNaN(d.getTime())) {
+    return undefined;
+  }
+  return d;
+}
+
+export function dateAsTimestamp(date?: Date | null) {
+  return date ? date.getTime() : undefined;
+}

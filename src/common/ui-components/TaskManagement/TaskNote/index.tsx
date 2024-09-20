@@ -26,7 +26,9 @@ export function TaskNote({
   return (
     <>
       <Card shadow="sm" padding="xs" radius="md" withBorder>
-        <Text size="sm">{note.content}</Text>
+        <Text size="sm" style={{ whiteSpace: "pre-line" }}>
+          {note.content}
+        </Text>
         <Flex mt=".5rem" justify="space-between" align="end">
           <Flex
             mt=".5rem"

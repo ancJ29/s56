@@ -30,7 +30,9 @@ export default clientStore;
 
 function _loadClient() {
   try {
-    const res = getClientMetaDataSchema.result.safeParse(JSON.parse(localStorage.__CLIENT__ || "{}"));
+    const res = getClientMetaDataSchema.result.safeParse(
+      JSON.parse(localStorage.__CLIENT__ || "{}"),
+    );
     return res.success ? res.data : undefined;
   } catch (e) {
     // skip
