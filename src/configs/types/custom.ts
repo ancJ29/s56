@@ -1,7 +1,5 @@
 import { getClientMetaDataSchema } from "@/configs/schema/client";
-import { Prisma } from "@prisma/client";
 import * as z from "zod";
-import { AuthenticationPayload } from ".";
 import { Menu, UnknownRecord } from "./base";
 
 export type ClientMetaData = z.infer<typeof getClientMetaDataSchema.result>;
@@ -34,11 +32,11 @@ export interface ClientSpecificCustomHandler {
     >;
     statusMapper?: (status: string) => number;
     statusValidator?: (_: number) => boolean;
-    getCondition?: (
-      user: AuthenticationPayload,
-      _?: {
-        assigneeId?: string;
-      },
-    ) => Promise<Prisma.TaskFindFirstOrThrowArgs["where"]>;
+    // getCondition?: (
+    //   user: AuthenticationPayload,
+    //   _?: {
+    //     assigneeId?: string;
+    //   },
+    // ) => Promise<Prisma.TaskFindFirstOrThrowArgs["where"]>;
   };
 }
