@@ -4,6 +4,7 @@ import {
   authenticationPayloadSchema,
   loginSchema,
   registerSchema,
+  updatePasswordSchema,
 } from "./auth";
 import { getClientMetaDataSchema, updateTranslationSchema } from "./client";
 import {
@@ -35,6 +36,7 @@ export const C_SERVICE_SCHEMA = {
   API_GATEWAY: {
     REQUEST_BODY: z.union([
       loginSchema.payload,
+      updatePasswordSchema.payload,
       registerSchema.payload,
       getClientMetaDataSchema.payload,
       updateTranslationSchema.payload,
@@ -53,6 +55,7 @@ export const C_SERVICE_SCHEMA = {
     ]),
     RESPONSE_BODY: z.union([
       loginSchema.result,
+      updatePasswordSchema.result,
       registerSchema.result,
       getClientMetaDataSchema.result,
       updateTranslationSchema.result,

@@ -51,6 +51,12 @@ const routes = [
     element: lazy(() => import("@/pages/tasks")),
   },
   {
+    path: "/profile",
+    title: "Profile",
+    wrappers: ["Auth", "CollapseAppShell"],
+    element: lazy(() => import("@/pages/profile")),
+  },
+  {
     path: "*",
     wrapper: "Blank",
     element: lazy(() => import("@/pages/login")),

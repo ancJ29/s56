@@ -59,3 +59,14 @@ export const loginSchema = builder({
     token: stringSchema,
   }),
 });
+
+export const updatePasswordSchema = builder({
+  group: z.literal(APP_ACTION_GROUPS.AUTH),
+  action: z.literal(APP_ACTIONS.UPDATE_PASSWORD),
+  params: z.object({
+    clientId: numberSchema,
+    password: stringSchema,
+    newPassword: stringSchema,
+  }),
+  result: successSchema,
+});

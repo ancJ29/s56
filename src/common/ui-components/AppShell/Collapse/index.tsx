@@ -12,6 +12,7 @@ import {
   Text,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { useNavigate } from "react-router-dom";
 import { CAvatar } from "../../CKits/CAvatar";
 import { LanguagePicker } from "../../LanguagePicker";
 import classes from "./style.module.css";
@@ -26,6 +27,7 @@ export default function CollapseAppShell({
   const { header } = useAppStore();
   const { payload } = useAuthStore();
   const [collapsed, { toggle }] = useDisclosure(true);
+  const navigate = useNavigate();
 
   return (
     <AppShell
@@ -69,9 +71,11 @@ export default function CollapseAppShell({
           <Space style={{ flexGrow: 1 }} />
           {payload?.id && (
             <Flex
+              onClick={() => navigate("/profile")}
               justify="start"
               align="center"
               gap="xs"
+              style={{ cursor: "pointer" }}
               visibleFrom="md"
             >
               <CAvatar size={"md"} name={payload?.userName} />

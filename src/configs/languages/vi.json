@@ -36,5 +36,14 @@
   "Input": "Nhập",
   "Select": "Chọn",
   "Reporter": "Tạo bởi",
+  "Something went wrong": "Đã xảy ra lỗi",
+  "Can not update password!!!": "Không thể cập nhật mật khẩu",
+  "Password Updated": "Mật khẩu đã được cập nhật",
+  "New Password": "Mật khẩu mới",
+  "Confirm New Password": "Xác nhận mật khẩu mới",
+  "Update Password": "Cập nhật mật khẩu",
+  "Your password has been updated": "Mật khẩu của bạn đã được cập nhật",
+  "Passwords do not match": "Mật khẩu không khớp",
+  "New password cannot be the same as the old one": "Mật khẩu mới không thể giống với mật khẩu cũ",
   "X": "X"
 }

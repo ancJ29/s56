@@ -36,5 +36,14 @@
   "Input": "Input",
   "Select": "Select",
   "Reporter": "Reporter",
+  "Something went wrong": "Something went wrong",
+  "Can not update password!!!": "Can not update password!!!",
+  "Password Updated": "Password Updated",
+  "New Password": "New Password",
+  "Confirm New Password": "Confirm New Password",
+  "Update Password": "Update Password",
+  "Your password has been updated": "Your password has been updated",
+  "Passwords do not match": "Passwords do not match",
+  "New password cannot be the same as the old one": "New password cannot be the same as the old one",
   "X": "X"
 }

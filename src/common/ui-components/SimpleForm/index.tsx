@@ -21,6 +21,7 @@ export function SimpleForm<T extends Record<string, string>>({
     <form
       onSubmit={form.onSubmit(async () => {
         const payload = form.getValues();
+        logger.trace("submit...", payload);
         form.validate();
         if (form.isValid()) {
           logger.trace("submit...", payload);
