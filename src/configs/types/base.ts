@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { menuSchema } from "../schema/admin";
 
 export type ServiceSchema<G, A, P, R> = {
   group: z.ZodLiteral<G>;
@@ -15,3 +16,5 @@ export type ServiceSchema<G, A, P, R> = {
 export type Dictionary = Record<string, string>;
 
 export type UnknownRecord = Record<string, unknown>;
+
+export type Menu = z.infer<typeof menuSchema>;

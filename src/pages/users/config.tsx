@@ -1,3 +1,6 @@
+import { User } from "@/common/services/users";
+import { Text } from "@mantine/core";
+
 export const configs = [
   {
     key: "userName",
@@ -7,7 +10,13 @@ export const configs = [
   {
     key: "fullName",
     label: "Full name",
-    field: "fullName",
+    render: (user: User) => {
+      return (
+        <Text style={{ whiteSpace: "pre-line" }}>
+          {user.displayName || user.fullName || "N/A"}
+        </Text>
+      );
+    },
   },
   {
     key: "department",

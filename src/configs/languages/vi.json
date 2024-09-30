@@ -1,5 +1,6 @@
 {
   "Register": "Đăng ký",
+  "Accounting": "Kế toán",
   "Task Management": "Quản lý công việc",
   "User Management": "Quản lý nhân sự",
   "Logout": "Thoát",
@@ -7,7 +8,9 @@
   "Add new user": "Thêm nhân sự",
   "Add your note": "Thêm ghi chú",
   "Assignee": "Người phụ trách",
-  "DENSE MODE": "DENSE MODE",
+  "DENSE MODE": "Thu gọn",
+  "ON": "Bật",
+  "OFF": "Tắt",
   "Department": "Phòng ban",
   "Description": "Mô tả",
   "End date": "Ngày kết thúc",
@@ -32,5 +35,6 @@
   "Task group": "Nhóm công việc",
   "Input": "Nhập",
   "Select": "Chọn",
+  "Reporter": "Tạo bởi",
   "X": "X"
 }

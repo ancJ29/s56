@@ -5,7 +5,6 @@ import { ONE_DAY } from "@/constants";
 import { dropTime } from "@/utils";
 import {
   Box,
-  Center,
   Container,
   Flex,
   ScrollArea,
@@ -13,10 +12,10 @@ import {
   Text,
   Tooltip,
 } from "@mantine/core";
-import { IconDatabaseOff } from "@tabler/icons-react";
 import clsx from "clsx";
 import dayjs from "dayjs";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { CNoRecord } from "../../CKits/CNoRecord";
 import { UserLabel } from "../../UserManagement/UserLabel";
 import { StatusBadge } from "../StatusBadge";
 import classes from "./styles.module.scss";
@@ -24,7 +23,7 @@ import classes from "./styles.module.scss";
 export function GanttChart({
   tasks,
   displayGroup = true,
-  dense = true,
+  dense,
   total = 30,
   from,
   to,
@@ -32,7 +31,7 @@ export function GanttChart({
   onSelectTask,
 }: {
   displayGroup?: boolean;
-  dense?: boolean;
+  dense: boolean;
   total?: number;
   from?: number;
   to?: number;
@@ -95,10 +94,47 @@ export function GanttChart({
     let total = Math.floor((last - first) / ONE_DAY);
     total = Math.max(total, 7);
     return { startFrom: first, total };
-  }, [tasks]);
+  }, [from, tasks, to]);
+
+  const header = useMemo(() => {
+    return (
+      <Table.Thead>
+        <Table.Tr>
+          <Table.Th className={classes.headerHeight}>
+            {t("Task Name")}
+          </Table.Th>
+          <Table.Th
+            className={classes.headerHeight}
+            w="9rem"
+            hidden={dense}
+          >
+            {t("Assignee")}
+          </Table.Th>
+          <Table.Th className={classes.headerHeight} hidden={dense}>
+            {t("Status")}
+          </Table.Th>
+          <Table.Th className={classes.headerHeight} hidden={dense}>
+            {t("Start")}
+          </Table.Th>
+          <Table.Th className={classes.headerHeight} hidden={dense}>
+            {t("End")}
+          </Table.Th>
+        </Table.Tr>
+      </Table.Thead>
+    );
+  }, [t, dense]);
+
+  const toggle = useCallback((group: { groupId: string }) => {
+    setGroupVisibilities((groupVisibilities) => ({
+      ...groupVisibilities,
+      [group.groupId]: !groupVisibilities[group.groupId],
+    }));
+  }, []);
+
   if (isMobile) {
     return <></>;
   }
+
   return (
     <>
       <Container
@@ -113,38 +149,7 @@ export function GanttChart({
           w={dense ? "35vw" : "100vw"}
           className={clsx(dense ? classes.dense : classes.normal)}
         >
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th className={classes.headerHeight}>
-                {t("Task Name")}
-              </Table.Th>
-              <Table.Th
-                className={classes.headerHeight}
-                w="9rem"
-                hidden={dense}
-              >
-                {t("Assignee")}
-              </Table.Th>
-              <Table.Th
-                className={classes.headerHeight}
-                hidden={dense}
-              >
-                {t("Status")}
-              </Table.Th>
-              <Table.Th
-                className={classes.headerHeight}
-                hidden={dense}
-              >
-                {t("Start")}
-              </Table.Th>
-              <Table.Th
-                className={classes.headerHeight}
-                hidden={dense}
-              >
-                {t("End")}
-              </Table.Th>
-            </Table.Tr>
-          </Table.Thead>
+          {header}
           <Table.Tbody>
             {displayGroup ? (
               groups.map((group) => (
@@ -153,13 +158,7 @@ export function GanttChart({
                   opened={groupVisibilities[group.groupId] ?? true}
                   group={group}
                   dense={dense}
-                  onToggle={() => {
-                    setGroupVisibilities({
-                      ...groupVisibilities,
-                      [group.groupId]:
-                        !groupVisibilities[group.groupId],
-                    });
-                  }}
+                  onToggle={() => toggle(group)}
                   onSelectTask={onSelectTask}
                 />
               ))
@@ -255,7 +254,7 @@ export function GanttChart({
       {!tasks.length && (
         <Container visibleFrom="md" fluid>
           <Flex
-            h="20vh"
+            h="30vh"
             w="100%"
             justify="center"
             style={{
@@ -263,10 +262,7 @@ export function GanttChart({
               borderTop: "none",
             }}
           >
-            <Center>
-              <IconDatabaseOff />
-              {t("No records found")}
-            </Center>
+            <CNoRecord />
           </Flex>
         </Container>
       )}
@@ -323,10 +319,8 @@ function TaskRow({
         className={classes.ceilHeight}
       >
         <Tooltip label={task.title} position="top-start">
-          <Box>
+          <Box px="sm" py={0}>
             <Text
-              pl="sm"
-              ml="sm"
               className={classes.title}
               style={{
                 overflow: "hidden",
@@ -339,20 +333,22 @@ function TaskRow({
                 <Flex
                   justify="space-between"
                   align="center"
-                  px={".5rem"}
-                  py={0}
                   fz={"0.8rem"}
+                  ml="sm"
+                  gap={20}
                   color="dimmed"
                   className={classes.subTitle}
                 >
-                  <Flex gap={5} justify="start" align="center">
-                    {t("Assignee")}:{" "}
-                    <UserLabel
-                      size="1.3rem"
-                      userId={task.assigneeId}
-                    />
+                  <Flex gap={5} align="center">
+                    <span>{t("Assignee")}:</span>
+                    <Text fw="500" fz="sm">
+                      {task.assignee || "--"}
+                    </Text>
                   </Flex>
-                  <StatusBadge status={task.status} />
+                  <Flex gap={5} align="center">
+                    <span>{t("Status")}:</span>
+                    <StatusBadge status={task.status} />
+                  </Flex>
                 </Flex>
               </>
             )}

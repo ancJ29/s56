@@ -1,5 +1,6 @@
 {
   "Register": "Register",
+  "Accounting": "Accounting",
   "Task Management": "Task Management",
   "User Management": "User Management",
   "Logout": "Logout",
@@ -8,6 +9,8 @@
   "Add your note": "Add your note",
   "Assignee": "Assignee",
   "DENSE MODE": "DENSE MODE",
+  "ON": "ON",
+  "OFF": "OFF",
   "Department": "Department",
   "Description": "Description",
   "End date": "End date",
@@ -32,5 +35,6 @@
   "Task group": "Task group",
   "Input": "Input",
   "Select": "Select",
+  "Reporter": "Reporter",
   "X": "X"
 }

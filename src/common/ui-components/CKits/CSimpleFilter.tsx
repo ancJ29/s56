@@ -84,14 +84,14 @@ export function CSimpleFilter({
           </Flex>
         </Flex>
       </Drawer>
-      <ActionIcon
-        m={0}
-        variant="transparent"
-        onClick={open}
-        hiddenFrom="md"
-      >
-        <IconFilter size={"1rem"} />
-      </ActionIcon>
+      <Flex hiddenFrom="md" pb="xs">
+        <ActionIcon m={0} variant="transparent" onClick={open}>
+          <IconFilter size={"1rem"} />
+        </ActionIcon>
+        <Button onClick={onClear} variant="outline" size="xs">
+          {t("Clear")}
+        </Button>
+      </Flex>
       <Flex
         justify="end"
         align="center"

@@ -11,6 +11,7 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
+import { CNoRecord } from "../../CKits/CNoRecord";
 
 export type MobileDataListProps<T extends UnknownRecord> = {
   tableData: TableData<T>;
@@ -33,30 +34,36 @@ export function MobileDataList<T extends UnknownRecord>({
   return (
     <>
       <ScrollArea h={scrollAreaHeight} hiddenFrom="md">
-        <Stack gap={gap}>
-          {tableData.data.map((el, idx) => {
-            return (
-              <Card
-                key={idx}
-                withBorder
-                onClick={() => onClick?.(el)}
-              >
-                {tableData.configs.map((config, idx) => {
-                  let label = config.label || "";
-                  if (typeof label === "string") {
-                    label = t(label);
-                  }
-                  return (
-                    <Flex justify="space-between" key={idx}>
-                      <Text fw="500">{label}</Text>
-                      {_content(config, el, t)}
-                    </Flex>
-                  );
-                })}
-              </Card>
-            );
-          })}
-        </Stack>
+        {!tableData.data.length ? (
+          <Flex h="60vh" justify="center" align="center">
+            <CNoRecord />
+          </Flex>
+        ) : (
+          <Stack gap={gap}>
+            {tableData.data.map((el, idx) => {
+              return (
+                <Card
+                  key={idx}
+                  withBorder
+                  onClick={() => onClick?.(el)}
+                >
+                  {tableData.configs.map((config, idx) => {
+                    let label = config.label || "";
+                    if (typeof label === "string") {
+                      label = t(label);
+                    }
+                    return (
+                      <Flex justify="space-between" key={idx}>
+                        <Text fw="500">{label}</Text>
+                        {_content(config, el, t)}
+                      </Flex>
+                    );
+                  })}
+                </Card>
+              );
+            })}
+          </Stack>
+        )}
       </ScrollArea>
     </>
   );

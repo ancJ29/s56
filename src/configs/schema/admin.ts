@@ -1,4 +1,9 @@
-import { APP_ACTION_GROUPS, APP_ACTIONS, APP_ICONS } from "@/configs/enums";
+import {
+  APP_ACTION_GROUPS,
+  APP_ACTIONS,
+  APP_ICONS,
+  APP_MENU,
+} from "@/configs/enums";
 import * as z from "zod";
 import {
   builder,
@@ -18,6 +23,11 @@ export const addClientSchema = builder({
   result: successSchema,
 });
 
+export const menuKeySchema = z.enum([
+  APP_MENU.TASK_MANAGEMENT,
+  APP_MENU.USER_MANAGEMENT,
+]);
+
 export const iconSchema = z.enum([
   APP_ICONS.Icon2fa,
   APP_ICONS.IconBellRinging,
@@ -33,6 +43,7 @@ export const iconSchema = z.enum([
 
 export const menuItemSchema = z.object({
   label: stringSchema,
+  key: menuKeySchema,
   link: stringSchema,
   icon: iconSchema,
 });

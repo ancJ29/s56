@@ -58,7 +58,7 @@ export default function Users() {
       </CDrawer>
       <CAddIcon
         onClick={open}
-        hidden={opened || payload?.isAdmin !== true}
+        hidden={opened || payload?.permission?.isAdmin !== true}
       />
     </>
   );
@@ -124,7 +124,7 @@ function InputForm({ withTitle = false }: { withTitle?: boolean }) {
         }
       });
     },
-    [],
+    [t],
   );
 
   return (

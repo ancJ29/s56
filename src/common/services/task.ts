@@ -24,6 +24,7 @@ const group = APP_ACTION_GROUPS.TASK;
 
 export type Task = Omit<TaskFromServer, "status"> & {
   status: string;
+  assignee?: string;
 };
 
 export type Note = Task["notes"][0];
@@ -32,14 +33,20 @@ export type Group = z.infer<typeof getGroupsSchema.result>[0];
 
 export async function getGroups() {
   const action = APP_ACTIONS.GET_GROUPS;
-  return await callApi({
-    group,
-    action,
-    payload: {}
-  }, getGroupsSchema, {
-    cached: true,
-    key: "tasks.groups.4wS3maA",
-  }) || [];
+  return (
+    (await callApi(
+      {
+        group,
+        action,
+        payload: {},
+      },
+      getGroupsSchema,
+      {
+        cached: true,
+        key: "tasks.groups.4wS3maA",
+      },
+    )) || []
+  );
 }
 
 export async function getTasks(filter?: {
@@ -68,6 +75,7 @@ export async function getTasks(filter?: {
   const tasks = res?.map(({ status: statusId, ...el }) => ({
     ...el,
     status: _statusIdToString(statusId, client),
+    assignee: client?.users?.[el.assigneeId || ""]?.userName || "",
   }));
   logger.debug("Tasks", tasks);
   return tasks || [];
@@ -76,9 +84,9 @@ export async function getTasks(filter?: {
 export async function registerTask(task: Task) {
   const action = APP_ACTIONS.REGISTER_TASK;
   const client = await _getClient();
-  let groupId: string | undefined = task.groupId
+  let groupId: string | undefined = task.groupId;
   if (!groupId || groupId === "00000000000000000000") {
-    groupId = undefined
+    groupId = undefined;
   }
   const res = await callApi(
     {
@@ -103,9 +111,9 @@ export async function registerTask(task: Task) {
 export async function saveTask(task: Task) {
   const action = APP_ACTIONS.UPDATE_TASK;
   const client = await _getClient();
-  let groupId: string | undefined = task.groupId
+  let groupId: string | undefined = task.groupId;
   if (!groupId || groupId === "00000000000000000000") {
-    groupId = undefined
+    groupId = undefined;
   }
   await callApi(
     {

@@ -3,7 +3,7 @@ import useAuthStore from "@/common/stores/auth";
 import { TablerIcon } from "@/common/ui-components/TablerIcon";
 import { Text, UnstyledButton } from "@mantine/core";
 import { IconLogout } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import classes from "./style.module.css";
 
@@ -11,35 +11,41 @@ import classes from "./style.module.css";
 export function SimpleNavbar() {
   const t = useTranslation();
   const { payload } = useAuthStore();
-  const menu = payload?.client?.menu || [];
   const navigate = useNavigate();
-  const [active, setActive] = useState(menu[0]?.label);
-
+  const [active, setActive] = useState(
+    payload?.permission?.menu?.[0]?.label,
+  );
+  const menu = useMemo(
+    () => payload?.permission?.menu || [],
+    [payload],
+  );
   useEffect(() => {
     const { label } =
       menu.find((item) => item.link === window.location.pathname) ||
       {};
     setActive(label || menu[0]?.label);
-  }, []);
-  const links = (payload?.client?.menu || []).map((item) => (
-    <Text
-      className={classes.link}
-      data-active={item.label === active || undefined}
-      key={item.label}
-      onClick={(event) => {
-        event.preventDefault();
-        setActive(item.label);
-        navigate(item.link);
-      }}
-    >
-      <TablerIcon
-        iconName={item.icon}
-        className={classes.linkIcon}
-        stroke={1.5}
-      />
-      <span>{t(item.label)}</span>
-    </Text>
-  ));
+  }, [menu]);
+
+  const links =
+    payload?.permission?.menu?.map((item) => (
+      <Text
+        className={classes.link}
+        data-active={item.label === active || undefined}
+        key={item.label}
+        onClick={(event) => {
+          event.preventDefault();
+          setActive(item.label);
+          navigate(item.link);
+        }}
+      >
+        <TablerIcon
+          iconName={item.icon}
+          className={classes.linkIcon}
+          stroke={1.5}
+        />
+        <span>{t(item.label)}</span>
+      </Text>
+    )) || [];
 
   return (
     <nav className={classes.navbar}>

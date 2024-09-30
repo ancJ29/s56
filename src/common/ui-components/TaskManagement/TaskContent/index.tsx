@@ -53,28 +53,31 @@ export function TaskContent({
   const [form, setForm] = useState({ ...task });
   const isNew = !form.id;
 
-  const onNoteSaved = useCallback((note: string) => {
-    const notes = form.notes || [];
-    if (!payload?.userName) {
-      throw new Error("Invalid payload");
-    }
-    addNote(note, task.id).then((noteId) => {
-      if (noteId) {
-        const now = Date.now();
-        notes.push({
-          id: noteId,
-          content: note,
-          userName: payload?.userName,
-          createdAt: now,
-          updatedAt: now,
-        });
-        setForm({ ...form, notes });
-        success("Success", "Your note is added to the task");
-      } else {
-        failed("Something went wrong", "Can not save your note!!!");
+  const onNoteSaved = useCallback(
+    (note: string) => {
+      const notes = form.notes || [];
+      if (!payload?.userName) {
+        throw new Error("Invalid payload");
       }
-    });
-  }, []);
+      addNote(note, task.id).then((noteId) => {
+        if (noteId) {
+          const now = Date.now();
+          notes.push({
+            id: noteId,
+            content: note,
+            userName: payload?.userName,
+            createdAt: now,
+            updatedAt: now,
+          });
+          setForm({ ...form, notes });
+          success("Success", "Your note is added to the task");
+        } else {
+          failed("Something went wrong", "Can not save your note!!!");
+        }
+      });
+    },
+    [form, payload?.userName, task.id],
+  );
 
   if (!task) {
     return <></>;

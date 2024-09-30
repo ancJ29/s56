@@ -22,7 +22,7 @@ export function StatusSelector({
       .map(([displayName]) => {
         return { value: displayName, label: t(displayName) };
       });
-  }, [client]);
+  }, [client?.tasks?.statusMap, t]);
 
   return <Select value={value} data={data} {...props} />;
 }

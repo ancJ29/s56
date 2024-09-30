@@ -25,6 +25,6 @@ export function CMobileFull({
         />
       ),
     });
-  }, []);
+  }, [onClose, title]);
   return <Container>{children}</Container>;
 }

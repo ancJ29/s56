@@ -20,6 +20,7 @@ export const getAllUserSchema = builder({
       id: stringSchema,
       userName: stringSchema,
       fullName: optionalStringSchema,
+      displayName: optionalStringSchema,
       departmentCode: optionalStringSchema,
     })
     .array(),

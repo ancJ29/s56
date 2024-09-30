@@ -13,6 +13,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { CAvatar } from "../../CKits/CAvatar";
+import { LanguagePicker } from "../../LanguagePicker";
 import classes from "./style.module.css";
 
 // Ref: https://mantine.dev/app-shell/?e=CollapseDesktop&s=demo
@@ -65,7 +66,7 @@ export default function CollapseAppShell({
           >
             {header?.title || t(title)}
           </Text>
-          <Space style={{ flexGrow: 1 }} visibleFrom="md" />
+          <Space style={{ flexGrow: 1 }} />
           {payload?.id && (
             <Flex
               justify="start"
@@ -77,6 +78,7 @@ export default function CollapseAppShell({
               <Text>{payload?.fullName || payload?.userName}</Text>
             </Flex>
           )}
+          <LanguagePicker />
         </Group>
       </AppShell.Header>
       <AppShell.Navbar p="md" onClick={toggle}>

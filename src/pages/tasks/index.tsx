@@ -49,7 +49,9 @@ export default function Tasks() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [groups, setGroups] = useState<Group[]>([]);
   const [opened, { open, close }] = useDisclosure(false);
-  const [dense, { toggle }] = useDisclosure(false);
+  const [dense, { toggle }] = useDisclosure(
+    localStorage.__TASK_DENSE_MODE__ === "true",
+  );
   const [selectedTask, setSelectedTask] = useState<Task | undefined>(
     undefined,
   );
@@ -103,13 +105,13 @@ export default function Tasks() {
       setSelectedTask(task);
       open();
     },
-    [open, tasks, isMobile],
+    [open, tasks],
   );
 
   const onClose = useCallback(() => {
     close();
     setSelectedTask(undefined);
-  }, [isMobile, close]);
+  }, [close]);
 
   const onTaskSaved = useCallback(
     (task?: Task) => {
@@ -170,7 +172,15 @@ export default function Tasks() {
   return (
     <>
       <Flex justify="space-between" align="end" gap="md">
-        <ViewSwitcher dense={dense} onToggle={toggle} />
+        <ViewSwitcher
+          dense={dense}
+          onToggle={() => {
+            localStorage.__TASK_DENSE_MODE__ = dense
+              ? "false"
+              : "true";
+            toggle();
+          }}
+        />
         <Space />
         <Filter
           key={count}

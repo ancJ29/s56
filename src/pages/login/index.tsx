@@ -44,7 +44,7 @@ export default function Login() {
         }
       });
     },
-    [],
+    [setToken],
   );
 
   if (payload?.id) {

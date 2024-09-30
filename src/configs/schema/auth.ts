@@ -16,16 +16,21 @@ export const authenticationPayloadSchema = z.object({
   clientId: numberSchema,
   userName: stringSchema,
   fullName: optionalStringSchema,
-  isSystemAdmin: optionalBooleanSchema,
-  isAdmin: optionalBooleanSchema,
   key: stringSchema,
   iv: stringSchema,
+  permission: z
+    .object({
+      isSystemAdmin: optionalBooleanSchema,
+      isAdmin: optionalBooleanSchema,
+      menu: OTHER_SCHEMA.CLIENT_OTHER_SCHEMA.shape.menu,
+    })
+    .optional(),
   client: z
     .object({
       id: numberSchema,
       name: stringSchema,
       code: stringSchema,
-      menu: OTHER_SCHEMA.CLIENT_OTHER_SCHEMA.shape.menu,
+      others: z.record(stringSchema, z.unknown()).optional(),
     })
     .optional(),
 });

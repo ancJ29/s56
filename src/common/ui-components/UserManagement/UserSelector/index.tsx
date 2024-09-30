@@ -1,4 +1,4 @@
-import logger from "@/common/helpers/logger";
+import useAuthStore from "@/common/stores/auth";
 import useClientStore from "@/common/stores/client";
 import { Box, Select, SelectProps } from "@mantine/core";
 import { useMemo } from "react";
@@ -8,16 +8,24 @@ type UserSelectorProps = Omit<SelectProps, "data">;
 
 export function UserSelector({ value, ...props }: UserSelectorProps) {
   const { client } = useClientStore();
+  const { payload } = useAuthStore();
 
   const users = useMemo(() => {
-    logger.debug("client", client?.users);
-    return Object.entries(client?.users || {}).map(
-      ([id, { userName }]) => ({
-        value: id,
-        label: userName,
-      }),
+    const others = payload?.client?.others as {
+      subUserIds: string[];
+    };
+    const subUserMap = Object.fromEntries(
+      others?.subUserIds?.map((userId) => [userId, true]) || [],
     );
-  }, [client]);
+    return Object.entries(client?.users || {})
+      .filter(([userId]) => {
+        return subUserMap[userId] || userId === payload?.id;
+      })
+      .map(([userId, { userName }]) => ({
+        value: userId,
+        label: userName,
+      }));
+  }, [client, payload]);
 
   return (
     <Select

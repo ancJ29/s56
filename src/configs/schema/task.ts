@@ -128,8 +128,10 @@ export const getGroupsSchema = builder({
   group: z.literal(APP_ACTION_GROUPS.TASK),
   action: z.literal(APP_ACTIONS.GET_GROUPS),
   params: z.object({}),
-  result: z.array(z.object({
-    id: stringSchema,
-    title: stringSchema,
-  })),
+  result: z.array(
+    z.object({
+      id: stringSchema,
+      title: stringSchema,
+    }),
+  ),
 });
