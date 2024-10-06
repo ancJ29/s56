@@ -65,6 +65,10 @@ export function SimpleNavbar() {
           <IconLogout className={classes.linkIcon} stroke={1.5} />
           <span>{t("Logout")}</span>
         </UnstyledButton>
+        <Text fz="xs" c="dimmed">
+          Version: {import.meta.env.APP_VERSION}
+          (Build: {import.meta.env.APP_BUILD})
+        </Text>
       </div>
     </nav>
   );

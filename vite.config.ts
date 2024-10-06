@@ -5,6 +5,9 @@ import preload from "vite-plugin-preload";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default () => {
+  process.env.APP_VERSION = process.env.npm_package_version;
+  process.env.APP_BUILD = Date.now().toString();
+
   return defineConfig({
     plugins: [react(), preload(), VitePWA({
       manifest: {
