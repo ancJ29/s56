@@ -1,12 +1,13 @@
 import useIsMobile from "@/common/hooks/useIsMobile";
 import useTranslation from "@/common/hooks/useTranslation";
-import { Task } from "@/common/services/task";
+import { statusColors, Task } from "@/common/services/task";
 import { ONE_DAY } from "@/constants";
 import { dropTime } from "@/utils";
 import {
   Box,
   Container,
   Flex,
+  MantineColor,
   ScrollArea,
   Table,
   Text,
@@ -281,12 +282,14 @@ function TaskRows({
   dense: boolean;
   onSelectTask: (taskId: string) => void;
 }) {
+  const colors = statusColors();
   return (
     <>
       {tasks.map((task) => (
         <TaskRow
           key={task.id}
           task={task}
+          bg={colors[task.status]?.[2]}
           dense={dense}
           onSelectTask={onSelectTask}
           hidden={!opened}
@@ -300,8 +303,10 @@ function TaskRow({
   hidden = false,
   task,
   dense,
+  bg,
   onSelectTask,
 }: {
+  bg: MantineColor;
   hidden?: boolean;
   dense: boolean;
   task: Task;
@@ -309,7 +314,11 @@ function TaskRow({
 }) {
   const t = useTranslation();
   return (
-    <Table.Tr hidden={hidden} onClick={() => onSelectTask(task.id)}>
+    <Table.Tr
+      bg={bg}
+      hidden={hidden}
+      onClick={() => onSelectTask(task.id)}
+    >
       <Table.Td
         w={dense ? "100%" : undefined}
         p={0}
@@ -400,6 +409,7 @@ export function TaskDatesRows({
   startFrom: number;
   onSelectTask: (taskId: string) => void;
 }) {
+  const colors = statusColors();
   return (
     <>
       {tasks.map((task) => (
@@ -408,6 +418,7 @@ export function TaskDatesRows({
           key={task.id}
           task={task}
           total={total}
+          bg={colors[task.status]?.[2]}
           startFrom={startFrom}
           onSelectTask={onSelectTask}
         />
@@ -418,11 +429,13 @@ export function TaskDatesRows({
 
 function TaskDatesRow({
   hidden = false,
+  bg,
   task,
   total,
   startFrom,
   onSelectTask,
 }: {
+  bg?: MantineColor;
   hidden?: boolean;
   task: Task;
   total: number;
@@ -431,6 +444,7 @@ function TaskDatesRow({
 }) {
   return (
     <Table.Tr
+      bg={bg}
       hidden={hidden}
       style={{
         cursor: "pointer",

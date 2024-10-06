@@ -3,7 +3,10 @@ import {
   APP_ACTION_GROUPS,
   APP_ACTIONS,
 } from "@/configs/enums/actions";
-import { loginSchema, updatePasswordSchema } from "@/configs/schema/auth";
+import {
+  loginSchema,
+  updatePasswordSchema,
+} from "@/configs/schema/auth";
 import { hashMd5 } from "@/utils";
 import logger from "../helpers/logger";
 import { _clientId } from "./_helpers";

@@ -82,7 +82,7 @@ export default function CollapseAppShell({
               <Text>{payload?.fullName || payload?.userName}</Text>
             </Flex>
           )}
-          <LanguagePicker />
+          {header?.title ? <></> : <LanguagePicker />}
         </Group>
       </AppShell.Header>
       <AppShell.Navbar p="md" onClick={toggle}>

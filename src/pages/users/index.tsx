@@ -14,7 +14,6 @@ import { CMobileFull } from "@/common/ui-components/CKits/CMobileFull";
 import { SimpleForm } from "@/common/ui-components/SimpleForm";
 import { SimpleResponsiveTable } from "@/common/ui-components/Table/SimpleResponsiveTable";
 import {
-  InputLabel,
   PasswordInput,
   Select,
   Stack,
@@ -76,14 +75,28 @@ function InputForm({ withTitle = false }: { withTitle?: boolean }) {
     );
   }, [t, client]);
 
+  const staffLevelOptions = useMemo(() => {
+    return Object.entries(client?.staffLevels || {}).map(
+      ([code, level]) => {
+        return { value: code, label: t(level) };
+      },
+    );
+  }, [t, client]);
+
   const form = useForm({
     initialValues: {
       userName: "",
       fullName: "",
+      title: "",
       password: "",
       departmentCode: "",
+      levelCode: "",
     },
     validate: {
+      title: (value) =>
+        value.length < 1 ? t("Staff title is required") : null,
+      levelCode: (value) =>
+        value.length < 1 ? t("Level is required") : null,
       departmentCode: (value) =>
         value.length < 1 ? t("Department is required") : null,
       fullName: (value) =>
@@ -105,9 +118,11 @@ function InputForm({ withTitle = false }: { withTitle?: boolean }) {
 
   const _register = useCallback(
     (values: {
+      title: string;
       userName: string;
       fullName: string;
       password: string;
+      levelCode: string;
       departmentCode: string;
     }) => {
       addUserByAdmin(values).then((res) => {
@@ -138,7 +153,7 @@ function InputForm({ withTitle = false }: { withTitle?: boolean }) {
       >
         <Stack gap="md">
           <Text fw="bold" fz="lg" hidden={!withTitle}>
-            Add new user
+            {t("Add new user")}
           </Text>
           <TextInput
             label={t("Full name")}
@@ -150,12 +165,27 @@ function InputForm({ withTitle = false }: { withTitle?: boolean }) {
             withAsterisk
             {...form.getInputProps("userName")}
           />
-          <InputLabel>{t("Password")}</InputLabel>
-          <PasswordInput {...form.getInputProps("password")} />
-          <InputLabel>{t("Department")}</InputLabel>
+          <PasswordInput
+            withAsterisk
+            label={t("Password")}
+            {...form.getInputProps("password")}
+          />
+          <TextInput
+            label={t("Staff title")}
+            withAsterisk
+            {...form.getInputProps("title")}
+          />
           <Select
+            withAsterisk
+            label={t("Department")}
             data={departmentOptions}
             {...form.getInputProps("departmentCode")}
+          />
+          <Select
+            withAsterisk
+            label={t("Staff level")}
+            data={staffLevelOptions}
+            {...form.getInputProps("levelCode")}
           />
         </Stack>
       </SimpleForm>

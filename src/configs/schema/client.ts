@@ -22,15 +22,26 @@ export const updateTranslationSchema = builder({
   result: successSchema,
 });
 
-const statusIDSchema = stringSchema;
+const IDSchema = stringSchema;
 const displayNameSchema = stringSchema;
 const orderSchema = numberSchema;
+const badgeColorSchema = stringSchema;
 const textColorSchema = stringSchema;
 const bgColorSchema = stringSchema;
 const clientTasksSchema = z.object({
+  priorityMap: z.record(
+    IDSchema,
+    z.tuple([displayNameSchema, textColorSchema]),
+  ),
   statusMap: z.record(
-    statusIDSchema,
-    z.tuple([displayNameSchema, orderSchema, textColorSchema, bgColorSchema]),
+    IDSchema,
+    z.tuple([
+      displayNameSchema,
+      orderSchema,
+      badgeColorSchema,
+      textColorSchema,
+      bgColorSchema,
+    ]),
   ),
 });
 
@@ -40,6 +51,10 @@ const clientDepartmentsSchema = z.record(
   departmentCodeSchema,
   departmentNameSchema,
 );
+
+const levelCodeSchema = stringSchema;
+const levelNameSchema = stringSchema;
+const clientStaffLevelsSchema = z.record(levelCodeSchema, levelNameSchema);
 
 const idSchema = stringSchema;
 const clientUsersSchema = z.record(
@@ -65,6 +80,7 @@ export const getClientMetaDataSchema = builder({
     lang: languageConfigSchema,
     tasks: clientTasksSchema.optional(),
     departments: clientDepartmentsSchema.optional(),
+    staffLevels: clientStaffLevelsSchema.optional(),
     users: clientUsersSchema.optional(),
   }),
 });

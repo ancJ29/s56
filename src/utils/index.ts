@@ -1,3 +1,4 @@
+import { UnknownRecord } from "@/configs/types";
 import { Md5 } from "ts-md5";
 
 export async function delay(ms: number) {
@@ -42,7 +43,7 @@ export function uuid() {
   });
 }
 
-export function cleanObj<T extends Record<string, unknown>>(obj: T) {
+export function cleanObj<T extends UnknownRecord>(obj: T) {
   for (const key in obj) {
     if (obj[key] === null || obj[key] === undefined) {
       delete obj[key];

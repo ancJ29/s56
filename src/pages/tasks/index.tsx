@@ -5,6 +5,7 @@ import {
   blankTask,
   getGroups,
   getTasks,
+  statusColors,
   type Group,
   type Task,
 } from "@/common/services/task";
@@ -163,6 +164,7 @@ export default function Tasks() {
           groups={groups}
           task={selectedTask}
           onSave={onTaskSaved}
+          onDelete={() => window.location.reload()}
           onClose={onClose}
         />
       </CMobileFull>
@@ -202,6 +204,12 @@ export default function Tasks() {
         tableData={{
           configs,
           data: _tasks,
+          rowStyles: (task) => {
+            const colors = statusColors();
+            return {
+              backgroundColor: colors[task.status]?.[2],
+            };
+          },
         }}
       />
       <GanttChart
@@ -221,6 +229,7 @@ export default function Tasks() {
             groups={groups}
             task={selectedTask}
             onSave={onTaskSaved}
+            onDelete={() => window.location.reload()}
             onClose={onClose}
           />
         )}
@@ -279,7 +288,6 @@ export function Filter({
           filter.values.endDate || null,
         ]}
         onChange={([start, end]) => {
-          logger.debug("Date range", start, end);
           filter.setValues({
             ...filter.getValues(),
             startDate: start ? new Date(start) : undefined,

@@ -30,11 +30,13 @@ export const addUserByAdminSchema = builder({
   group: z.literal(APP_ACTION_GROUPS.USER),
   action: z.literal(APP_ACTIONS.ADD_USER_BY_ADMIN),
   params: z.object({
+    title: optionalStringSchema,
     clientId: numberSchema,
     userName: stringSchema,
     password: passwordSchema,
     fullName: optionalStringSchema,
     departmentCode: optionalStringSchema,
+    levelCode: optionalStringSchema,
   }),
   result: successSchema,
 });

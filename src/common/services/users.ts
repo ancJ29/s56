@@ -21,11 +21,15 @@ export async function addUserByAdmin({
   userName,
   password,
   fullName,
+  title,
+  levelCode,
   departmentCode,
 }: {
+  title: string;
   userName: string;
   password: string;
   fullName?: string;
+  levelCode: string;
   departmentCode?: string;
 }) {
   const action = APP_ACTIONS.ADD_USER_BY_ADMIN;
@@ -35,10 +39,12 @@ export async function addUserByAdmin({
       action,
       payload: {
         userName,
+        title,
+        fullName,
         password: hashMd5(password),
         clientId: _clientId(),
+        levelCode,
         departmentCode,
-        fullName,
       },
     },
     addUserByAdminSchema,

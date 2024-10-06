@@ -45,6 +45,7 @@ export function MobileDataList<T extends UnknownRecord>({
                 <Card
                   key={idx}
                   withBorder
+                  style={tableData.rowStyles?.(el)}
                   onClick={() => onClick?.(el)}
                 >
                   {tableData.configs.map((config, idx) => {

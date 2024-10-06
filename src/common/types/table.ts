@@ -19,5 +19,6 @@ export type TableData<T extends UnknownRecord> = {
   styles?: {
     tableTr?: MantineStyleProp;
   };
+  rowStyles?: (props: T) => MantineStyleProp;
   data: T[];
 };

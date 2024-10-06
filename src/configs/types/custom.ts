@@ -1,10 +1,14 @@
 import { getClientMetaDataSchema } from "@/configs/schema/client";
 import * as z from "zod";
+import { AuthenticationPayload } from ".";
 import { Menu, UnknownRecord } from "./base";
 
 export type ClientMetaData = z.infer<typeof getClientMetaDataSchema.result>;
 
 type ColorCode = string;
+type TextColorCode = ColorCode;
+type BackgroundColorCode = ColorCode;
+type BadgeColorCode = ColorCode;
 type TaskStatusOrder = number;
 
 export interface ClientSpecificCustomHandler {
@@ -22,21 +26,30 @@ export interface ClientSpecificCustomHandler {
     menuBuilder?: (_: UnknownRecord) => Menu;
   };
   task?: {
-    /**
-     * statusMapGenerator is a function that
-     * returns a Record<statusID, [displayName, order]>
-     */
     statusMapGenerator?: () => Record<
       number,
-      [string, TaskStatusOrder, ColorCode, ColorCode]
+      // statusID
+      [
+        string,
+        TaskStatusOrder,
+        TextColorCode,
+        BadgeColorCode,
+        BackgroundColorCode,
+      ]
     >;
     statusMapper?: (status: string) => number;
+    priorityGenerator?: () => Record<
+      number,
+      // priorityID
+      [string, TextColorCode]
+    >;
+    priorityMapper?: (priority: string) => number;
     statusValidator?: (_: number) => boolean;
-    // getCondition?: (
-    //   user: AuthenticationPayload,
-    //   _?: {
-    //     assigneeId?: string;
-    //   },
-    // ) => Promise<Prisma.TaskFindFirstOrThrowArgs["where"]>;
+    getCondition?: (
+      user: AuthenticationPayload,
+      _?: {
+        assigneeId?: string;
+      },
+    ) => Promise<UnknownRecord>;
   };
 }
